@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+.span35{
+  width:112px
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="span4">
+      <h4>State</h4>
+      <select name="state" id="main_state_select">
+        {% for state in states %}
+        <option value="{{state.abbreviation}}">{{ state.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="span2">
+      <h4>Class Code</h4>
+      <input type="text" class="span2" name="class_code" id="class_code_1">
+      <a href="#class_code_modal" data-toggle="modal">+ Add Class Code</a>
+    </div>
+    <div class="span2">
+      <h4>Payroll</h4>
+      <div class="input-prepend">
+      <span class="add-on">$</span>
+        <input class="span35" id="prependedInput" type="text">
+      </div>
+    </div>
+    <div class="span2">
+      <h4>Mod</h4>
+      <input type="text" class="span2">
+    </div>
+    <div class="span2">
+      <h4>&nbsp;</h4>
+      <button class="btn btn-primary">Get Quote</button>
+    </div>
+</div>
+
+<div class="modal hide fade span2" id="class_code_modal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Find Class Code</h3>
+  </div>
+  <div class="modal-body">
+      <div style="width:50%;float:left;">
+        <h4>State</h4>
+        <select name="state" id="state_select">
+          <option value="-"> -- Select a state --</option>
+          {% for state in states %}
+          <option value="{{state.abbreviation}}">{{ state.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="width:50%;float:left;">
+        <h4>Industry Group</h4>
+        <select name="industry" id="industry_select">
+          <option value="-"> -- Select an industry--</option>
+          {% for industry in industries %}
+          <option value="{{ industry.id }}">{{ industry.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="height:300px;overflow-y:scroll;width:100%;">
+        <table class="table" id="class_codes"></table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+  $(function(){
+    $('#industry_select, #state_select').change(function(e){
+      var state = $('#state_select').val();
+      var industry = $('#industry_select').val();
+
+      if (state != "-" && industry != "-"){
+        $.get('/ajax/class_codes/', 
+          {'state': state, 'industry': industry},
+          function(data){
+              var $table = $('#class_codes');
+              $table.empty();
+            if (data.codes && data.codes.length){
+              for(var num in data.codes){
+                var code = data.codes[num];
+                $table.append('<tr><td><a class="code" href="#'+ code.code +'">' + code['code'] + '</a></td><td>' + code['name'] + '</td></tr>');
+              }
+              $('.code').bind('click', function(e){
+                e.preventDefault();
+                var code = $(this).attr('href').replace('#','');
+                $('#class_code_1').val(code);
+                $('#main_state_select').val(state);
+                $('#class_code_modal').modal('hide');
+              });
+            }else{
+              $table.append('<tr><td colspan="2"><em>No codes found</em></td></tr>'); 
+            }
+          }
+        );
+      }
+    });
+  });
+</script>
+{% endblock %}
