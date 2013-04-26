@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block extra_css %}
 <style>
@@ -9,37 +10,64 @@
 {% endblock %}
 
 {% block content %}
-  <div class="row">
+<div class="row">
+    <form action="{% url 'quote' %}" method="post">
     <div class="span4">
       <h4>State</h4>
       <select name="state" id="main_state_select">
+        <option value="-"> -- Select a state --</option>
         {% for state in states %}
-        <option value="{{state.abbreviation}}">{{ state.name }}</option>
+        <option {% if state.abbreviation == request.session.form.state %}selected{%endif %} value="{{state.abbreviation}}">{{ state.name }}</option>
         {% endfor %}
       </select>
     </div>
     <div class="span2">
       <h4>Class Code</h4>
-      <input type="text" class="span2" name="class_code" id="class_code_1">
-      <a href="#class_code_modal" data-toggle="modal">+ Add Class Code</a>
+      <input type="text" class="span2" name="class_code" id="class_code_1" value="{{ request.session.form.class_code }}">
+      <a href="#class_code_modal" data-toggle="modal">+ Search Codes</a>
     </div>
     <div class="span2">
       <h4>Payroll</h4>
       <div class="input-prepend">
       <span class="add-on">$</span>
-        <input class="span35" id="prependedInput" type="text">
+      <input class="span35" id="prependedInput" type="text" name="payroll" value="{{ request.session.form.payroll }}">
       </div>
     </div>
     <div class="span2">
       <h4>Mod</h4>
-      <input type="text" class="span2">
+      <input type="text" class="span2" name="mod" value="{{ request.session.form.mod }}">
     </div>
     <div class="span2">
       <h4>&nbsp;</h4>
       <button class="btn btn-primary">Get Quote</button>
     </div>
+    {% csrf_token %}
+  </form>
 </div>
 
+<!-- Quote View -->
+{% if request.session.carriers %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Carrier</th>
+      <th>Rate</th>
+      <th>Estimate</th>
+    </tr>
+  </thead>
+  {% for c in request.session.carriers %}
+  <tr>
+    <td>{{ c.carrier.carrier.name|title }}</td>
+    <td>{{ c.rate }}</td>
+    <td>${{ c.final|intcomma }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<!-- End Quote View -->
+
+<!-- MODAL -->
 <div class="modal hide fade span2" id="class_code_modal">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -51,7 +79,7 @@
         <select name="state" id="state_select">
           <option value="-"> -- Select a state --</option>
           {% for state in states %}
-          <option value="{{state.abbreviation}}">{{ state.name }}</option>
+          <option {% if state.abbreviation == request.session.form.state %}selected{%endif %} value="{{state.abbreviation}}">{{ state.name }}</option>
           {% endfor %}
         </select>
       </div>
@@ -77,6 +105,9 @@
 {% block extra_js %}
 <script>
   $(function(){
+    $('#main_state_select').change(function(e){
+      $('#state_select').val($(this).val());
+    });
     $('#industry_select, #state_select').change(function(e){
       var state = $('#state_select').val();
       var industry = $('#industry_select').val();
