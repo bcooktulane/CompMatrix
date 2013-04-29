@@ -19,7 +19,7 @@ class HomeView(TemplateView):
             }
         except:
             ## While changing things reset their session
-            request.session.flush()
+            self.request.session.flush()
         return context
 
 
