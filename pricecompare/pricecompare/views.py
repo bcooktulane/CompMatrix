@@ -12,6 +12,7 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = {
+            'num_class_codes': range(len(self.request.session['class_codes'])),
             'states': State.objects.filter(active=True).order_by('name'),
             'industries': IndustryGroup.objects.all()
         }
@@ -23,35 +24,71 @@ class QuoteView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         # Get the loss cost
-        try:
-            state = State.objects.get(abbreviation=request.POST.get('state'))
-            code = ClassCode.objects.get(code=request.POST.get('class_code'))
-            loss = LossCost.objects.get(class_code=code, state=state)
-        except State.DoesNotExist:
-            raise AssertionError()
-        except ClassCode.DoesNotExist:
-            raise AssertionError()
-        except LossCost.DoesNotExist:
-            raise AssertionError()
+        class_codes = []
 
-        # Get the carriers
-        payroll = Decimal(request.POST.get('payroll'))
+        for var in request.POST:
+            if 'class_code_' in var:
+                num = var.replace('class_code_', '')
+                class_code = request.POST.get(var)
+                payroll = request.POST.get('payroll_%s' % num)
+                payroll = Decimal(payroll)
+                try:
+                    state = State.objects.get(abbreviation=request.POST.get('state'))
+                    code = ClassCode.objects.get(code=class_code)
+                    loss = LossCost.objects.get(class_code=code, state=state)
+                    class_codes.append({
+                        'class_code': class_code,
+                        'payroll': payroll,
+                        'code': code,
+                        'state': state,
+                        'loss': loss,
+                    })
+                except State.DoesNotExist:
+                    raise AssertionError()
+                except ClassCode.DoesNotExist:
+                    raise AssertionError()
+                except LossCost.DoesNotExist:
+                    raise AssertionError()
+                except TypeError:
+                    print "Payroll is wrong"
+
         mod = Decimal(request.POST.get('mod'))
 
-        if not payroll or not mod:
-            raise AssertionError()
-
+        # Get the carriers
         carriers = []
         for carrier in CarrierState.objects.filter(state=state):
-            rate = carrier.lcm * loss.loss_cost
-            final = (payroll/100) * rate * mod
+            # Only if they have a premium > 0
+            max = 0
+            min = 0
+            if not carrier.premium or carrier.premium <= 0:
+                continue
+
+            rates = {}
+            for class_code in class_codes:
+                rate = carrier.lcm * class_code['loss'].loss_cost
+                print carrier
+                print "   %s" % rate
+
+                final = (payroll/100) * rate * mod
+                if final > max:
+                    max = final
+                if min == 0 or final < min:
+                    min = final
+                rates.update({'rate': rate, 'final': final})
+
             carriers.append({
                 'carrier': carrier,
-                'final': final,
-                'rate': rate
+                'class_codes': rates,
+                'max': max,
+                'min': min,
             })
 
+
+        for c in carriers:
+            print c['class_codes']
+
         request.session['carriers'] = carriers
+        request.session['class_codes'] = class_codes
         request.session['form'] = request.POST
 
         return redirect('home')

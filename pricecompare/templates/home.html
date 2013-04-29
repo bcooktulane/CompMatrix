@@ -21,18 +21,51 @@
         {% endfor %}
       </select>
     </div>
-    <div class="span2">
-      <h4>Class Code</h4>
-      <input type="text" class="span2" name="class_code" id="class_code_1" value="{{ request.session.form.class_code }}">
-      <a href="#class_code_modal" data-toggle="modal">+ Search Codes</a>
-    </div>
-    <div class="span2">
-      <h4>Payroll</h4>
-      <div class="input-prepend">
-      <span class="add-on">$</span>
-      <input class="span35" id="prependedInput" type="text" name="payroll" value="{{ request.session.form.payroll }}">
+
+    <div id="all_codes" class="span4">
+      <div class="row">
+        <div class="span2">
+          <h4>Class Code</h4>
+        </div>
+        <div class="span2">
+          <h4>Payroll</h4>
+        </div>
+      </div>
+
+      {% for class_code in request.session.class_codes %}
+        <div class="row" id="row_template">
+          <div class="span2">
+            <div class="input-append">
+                <input type="text" class="span1" name="class_code_{{ forloop.counter }}" id="class_code_{{ forloop.counter }}" value="{{ class_code.class_code }}">
+                <button class="btn search_code" data-cid="{{ forloop.counter }}" type="button">search</button>
+              </div>
+          </div>
+          <div class="span2">
+            <div class="input-prepend">
+            <span class="add-on">$</span>
+            <input class="span35" id="prependedInput" type="text" name="payroll_{{ forloop.counter }}" value="{{ class_code.payroll }}">
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="row" id="row_template">
+          <div class="span2">
+            <input type="text" class="span2" name="class_code_1" id="class_code_1" value="{{ request.session.form.class_code }}">
+          </div>
+          <div class="span2">
+            <div class="input-prepend">
+            <span class="add-on">$</span>
+            <input class="span35" id="prependedInput" type="text" name="payroll_1" value="{{ request.session.form.payroll }}">
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+      <div class="row" id="add_link">
+        <a href="#class_code_modal" id="add_class_code">+ Add Class Code</a>
       </div>
     </div>
+
     <div class="span2">
       <h4>Mod</h4>
       <input type="text" class="span2" name="mod" value="{{ request.session.form.mod }}">
@@ -51,15 +84,28 @@
   <thead>
     <tr>
       <th>Carrier</th>
-      <th>Rate</th>
+      <th>&nbsp;</th>
+      {% for cc in num_class_codes %}
+        <th>Rate {{ forloop.counter }}</th>
+        {% endfor %}
+      <th>Min</th>
+      <th>Max</th>
       <th>Estimate</th>
     </tr>
   </thead>
   {% for c in request.session.carriers %}
   <tr>
-    <td>{{ c.carrier.carrier.name|title }}</td>
-    <td>{{ c.rate }}</td>
-    <td>${{ c.final|intcomma }}</td>
+    <td><input type="checkbox"> &nbsp;<a href="">{{ c.carrier.carrier.name|title }}</a></td>
+    <td>
+      {% if c.carrier.premium < 200000 %}<img src="static/img/red-flag.png">{% endif %}
+      {% if c.carrier.premium > 1000000 %}<img src="static/img/green-flag.png">{% endif %}
+    </td>
+    {% for cc in c.class_codes %}
+      <td>{{ cc.rate }}</td>
+    {% endfor %}
+    <td>${{ c.min|intcomma }}</td>
+    <td>${{ c.max|intcomma }}</td>
+    <td>$-</td>
   </tr>
   {% endfor %}
 </table>
@@ -74,23 +120,26 @@
     <h3>Find Class Code</h3>
   </div>
   <div class="modal-body">
-      <div style="width:50%;float:left;">
-        <h4>State</h4>
-        <select name="state" id="state_select">
+      <div style="width:40%;float:left;">
+        <select name="state" id="state_select" class="span2">
           <option value="-"> -- Select a state --</option>
           {% for state in states %}
           <option {% if state.abbreviation == request.session.form.state %}selected{%endif %} value="{{state.abbreviation}}">{{ state.name }}</option>
           {% endfor %}
         </select>
       </div>
-      <div style="width:50%;float:left;">
-        <h4>Industry Group</h4>
+      <div style="width:30%;float:left;">
+        <input type="text" name="keyword" id="keyword" class="span2" placeholder="search keyword">
+        <!--<h4>Industry Group</h4>
         <select name="industry" id="industry_select">
           <option value="-"> -- Select an industry--</option>
           {% for industry in industries %}
           <option value="{{ industry.id }}">{{ industry.name }}</option>
           {% endfor %}
-        </select>
+        </select>-->
+      </div>
+      <div style="width:30%;float:left;">
+        <button class="btn btn-primary" id="search">Search</button>
       </div>
       <div style="height:300px;overflow-y:scroll;width:100%;">
         <table class="table" id="class_codes"></table>
@@ -105,28 +154,62 @@
 {% block extra_js %}
 <script>
   $(function(){
+    var current_class_code = 1;
+    var search_class_code = 0;
+
+    $('.search_code').click(function(e){
+      var cid = $(this).data('cid');
+      search_class_code = cid;
+      $('#class_code_modal').modal('show')
+    });
+
+    $('#add_class_code').click(function(e){
+      e.preventDefault();
+      current_class_code++;
+      var $new_code = $('#row_template').html();
+      $new_code = $new_code.replace('class_code_1','class_code_' + current_class_code);
+      $new_code = $new_code.replace('class_code_1','class_code_' + current_class_code);
+      $new_code = $new_code.replace('payroll_1','payroll_' + current_class_code);
+      var $new_code = $('<div class="row" />').append($new_code);
+      $new_code.find('input').val('');
+      $new_code.insertBefore('#add_link');
+    });
+
     $('#main_state_select').change(function(e){
       $('#state_select').val($(this).val());
     });
-    $('#industry_select, #state_select').change(function(e){
-      var state = $('#state_select').val();
-      var industry = $('#industry_select').val();
+    $('#keyword').bind('keypress', function(event){
+      if ( event.which == 13 ){
+        event.preventDefault();
+        $('#state_select').trigger('change');
+      }
+    });
 
-      if (state != "-" && industry != "-"){
+    $('#search').bind('click', function(){
+      $('#state_select').trigger('change');
+    });
+    $('#state_select').change(function(e){
+      var state = $('#state_select').val();
+      //var industry = $('#industry_select').val();
+      var keyword = $('#keyword').val();
+
+      if (state != "-"){
         $.get('/ajax/class_codes/', 
-          {'state': state, 'industry': industry},
+          {'state': state, 'q': keyword},
           function(data){
               var $table = $('#class_codes');
               $table.empty();
             if (data.codes && data.codes.length){
               for(var num in data.codes){
                 var code = data.codes[num];
-                $table.append('<tr><td><a class="code" href="#'+ code.code +'">' + code['code'] + '</a></td><td>' + code['name'] + '</td></tr>');
+                $table.append('<tr><td><a class="code" href="#'+ code.code +'">' + code['code'] + '</a></td><td><a class="code" href="#'+ code.code +'">' + code['name'] + '</a></td></tr>');
               }
               $('.code').bind('click', function(e){
                 e.preventDefault();
                 var code = $(this).attr('href').replace('#','');
-                $('#class_code_1').val(code);
+                console.log(search_class_code);
+                console.log($('#class_code_' + search_class_code));
+                $('#class_code_' + search_class_code).val(code);
                 $('#main_state_select').val(state);
                 $('#class_code_modal').modal('hide');
               });

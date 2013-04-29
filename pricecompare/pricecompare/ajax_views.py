@@ -24,19 +24,19 @@ class JSONResponseMixin(object):
 class ClassCodeView(JSONResponseMixin, View):
     def get(self, request, *args, **kwargs):
         state = request.GET.get('state')
-        industry = request.GET.get('industry')
+        #industry = request.GET.get('industry')
         q = request.GET.get('q', None)
 
         try:
             state = State.objects.get(abbreviation=state)
-            industry = IndustryGroup.objects.get(pk=industry)
+            #industry = IndustryGroup.objects.get(pk=industry)
         except State.DoesNotExist:
             pass
-        except IndustryGroup.DoesNotExist:
-            pass
+        #except IndustryGroup.DoesNotExist:
+        #    pass
 
-        lc = LossCost.objects.filter(state=state,
-                                     class_code__industry_group=industry)
+        lc = LossCost.objects.filter(state=state)
+                                     #class_code__industry_group=industry)
 
         if q:
             lc = lc.filter(class_code__name__icontains=q)
