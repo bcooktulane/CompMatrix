@@ -19,12 +19,16 @@ class HomeView(TemplateView):
             }
         except:
             ## While changing things reset their session
-            self.request.session.flush()
+            context = {}
         return context
 
 
 class QuoteView(TemplateView):
     template_name = "quote.html"
+
+    def get(self, request, *args, **kwargs):
+        self.request.session.flush()
+        return redirect('home')
 
     def post(self, request, *args, **kwargs):
         # Get the loss cost
