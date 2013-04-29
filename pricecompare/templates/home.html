@@ -50,7 +50,10 @@
       {% empty %}
         <div class="row" id="row_template">
           <div class="span2">
-            <input type="text" class="span2" name="class_code_1" id="class_code_1" value="{{ request.session.form.class_code }}">
+            <div class="input-append">
+                <input type="text" class="span1" name="class_code_1" id="class_code_1" value="">
+                <button class="btn search_code" data-cid="1" type="button">search</button>
+              </div>
           </div>
           <div class="span2">
             <div class="input-prepend">

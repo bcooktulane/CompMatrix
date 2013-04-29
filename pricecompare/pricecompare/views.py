@@ -12,14 +12,15 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         try:
-            context = {
-                'num_class_codes': range(len(self.request.session['class_codes'])),
-                'states': State.objects.filter(active=True).order_by('name'),
-                'industries': IndustryGroup.objects.all()
-            }
+            num_class_codes = range(len(self.request.session['class_codes']))
         except:
-            ## While changing things reset their session
-            context = {}
+            num_class_codes = []
+
+        context = {
+            'num_class_codes': num_class_codes,
+            'states': State.objects.filter(active=True).order_by('name'),
+            'industries': IndustryGroup.objects.all()
+        }
         return context
 
 
@@ -27,7 +28,8 @@ class QuoteView(TemplateView):
     template_name = "quote.html"
 
     def get(self, request, *args, **kwargs):
-        self.request.session.flush()
+        print "here"
+        self.request.session.clear()
         return redirect('home')
 
     def post(self, request, *args, **kwargs):
