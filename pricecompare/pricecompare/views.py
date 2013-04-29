@@ -11,11 +11,15 @@ class HomeView(TemplateView):
     template_name = "home.html"
 
     def get_context_data(self, **kwargs):
-        context = {
-            'num_class_codes': range(len(self.request.session['class_codes'])),
-            'states': State.objects.filter(active=True).order_by('name'),
-            'industries': IndustryGroup.objects.all()
-        }
+        try:
+            context = {
+                'num_class_codes': range(len(self.request.session['class_codes'])),
+                'states': State.objects.filter(active=True).order_by('name'),
+                'industries': IndustryGroup.objects.all()
+            }
+        except:
+            ## While changing things reset their session
+            request.session.flush()
         return context
 
 
