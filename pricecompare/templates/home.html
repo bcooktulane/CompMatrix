@@ -154,7 +154,7 @@
 {% block extra_js %}
 <script>
   $(function(){
-    var current_class_code = 1;
+    var current_class_code = {{ num_class_codes|length }};
     var search_class_code = 0;
 
     $('.search_code').click(function(e){
@@ -173,6 +173,13 @@
       var $new_code = $('<div class="row" />').append($new_code);
       $new_code.find('input').val('');
       $new_code.insertBefore('#add_link');
+
+      $new_code.find('button').data('cid',current_class_code);
+      $new_code.find('button').click(function(e){
+        var cid = $(this).data('cid');
+        search_class_code = cid;
+        $('#class_code_modal').modal('show')
+      });
     });
 
     $('#main_state_select').change(function(e){

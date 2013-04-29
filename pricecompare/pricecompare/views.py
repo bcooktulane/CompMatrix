@@ -44,11 +44,11 @@ class QuoteView(TemplateView):
                         'loss': loss,
                     })
                 except State.DoesNotExist:
-                    raise AssertionError()
+                    raise AssertionError("State does not exist")
                 except ClassCode.DoesNotExist:
-                    raise AssertionError()
+                    raise AssertionError("Class code does not exist")
                 except LossCost.DoesNotExist:
-                    raise AssertionError()
+                    raise AssertionError("LostCost not found")
                 except TypeError:
                     print "Payroll is wrong"
 
