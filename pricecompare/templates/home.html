@@ -118,8 +118,18 @@
   <tr><td colspan="4">&nbsp;</td></tr>
   <tr>
     <td></td>
+    <td>Estimated Debits Credit**</td>
+    <td>
+      <div id="slider"></div>
+      <div style="text-align:center;" id="percent">25%</div>
+    </td>
+    <td>--</td>
+  </tr>
+  <tr>
+    <td></td>
     <td>Modification Factor</td>
-    <td>{{ request.session.form.mod }}</td>
+    <!--<td>{{ request.session.form.mod }}</td>-->
+    <td><div id="slider"></div></td>
     <td>${{ carrier_data.total_mod|intcomma }}</td>
   </tr>
   <tr>
@@ -225,6 +235,16 @@
     var current_class_code = {{ num_class_codes|length }};
     var search_class_code = 0;
 
+     $( "#slider" ).slider({
+      value:25,
+      min: -75,
+      max: 75,
+      step: 5,
+      slide: function( event, ui ) {
+        $("#percent").html( ui.value + '%');
+      }
+    });
+    $( "#amount" ).val( "$" + $( "#slider" ).slider( "value" ) ); 
     /*
     $(window).scroll(function() {
       var tp = $(this).scrollTop();
