@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 
 from pricecompare.models import (State, IndustryGroup, LossCost, ClassCode,
-                                 CarrierState)
+                                 CarrierState, StateModifier)
 
 
 class HomeView(TemplateView):
@@ -16,10 +16,23 @@ class HomeView(TemplateView):
         except:
             num_class_codes = []
 
+        carrier_id = kwargs.get('carrier_id', None)
+        carrier = None
+        carrier_data = None
+        if carrier_id:
+            for c in self.request.session['carriers']:
+                if c['carrier'].id == int(carrier_id):
+                    carrier_data = c
+                    carrier = c['carrier'].carrier
+                    print c['class_codes']
+
         context = {
             'num_class_codes': num_class_codes,
             'states': State.objects.filter(active=True).order_by('name'),
-            'industries': IndustryGroup.objects.all()
+            'industries': IndustryGroup.objects.all(),
+            'carrier_id': carrier_id,
+            'carrier': carrier,
+            'carrier_data': carrier_data
         }
         return context
 
@@ -28,7 +41,6 @@ class QuoteView(TemplateView):
     template_name = "quote.html"
 
     def get(self, request, *args, **kwargs):
-        print "here"
         self.request.session.clear()
         return redirect('home')
 
@@ -68,34 +80,56 @@ class QuoteView(TemplateView):
         carriers = []
         for carrier in CarrierState.objects.filter(state=state):
             # Only if they have a premium > 0
-            max = 0
-            min = 0
             if not carrier.premium or carrier.premium <= 0:
                 continue
 
-            rates = {}
+            rates = []
+            manual = 0
+            total_payroll = 0
+            total_premium = 0
+            estimate = 0
             for class_code in class_codes:
                 rate = carrier.lcm * class_code['loss'].loss_cost
-                print carrier
-                print "   %s" % rate
 
-                final = (payroll/100) * rate * mod
-                if final > max:
-                    max = final
-                if min == 0 or final < min:
-                    min = final
-                rates.update({'rate': rate, 'final': final})
+                final = (class_code['payroll']/100) * rate * mod
+                premium = (class_code['payroll']/100) * rate
+                total_payroll += class_code['payroll']
+                total_premium += premium
+
+                rates.append({
+                    'rate': rate,
+                    'final': final,
+                    'code': class_code,
+                    'premium': premium,
+                })
+
+            # Fees
+            manual = estimate = total_premium
+            estimate += carrier.carrier.expense_constant
+
+            fees = StateModifier.objects.filter(state=state)
+            total_fee = 0
+            for fee in fees:
+                total_fee += (fee.modifier * total_payroll)
+
+            estimate += total_fee
+
+            # Min/max
+            max = manual * Decimal(1+(Decimal(state.max_credit)/100))
+            min = manual * Decimal(1-(Decimal(state.max_debit)/100))
 
             carriers.append({
                 'carrier': carrier,
                 'class_codes': rates,
+                'manual': manual,
+                'estimate': estimate,
+                'fees': fees,
                 'max': max,
                 'min': min,
+                'total_mod': (total_premium * mod) - total_premium,
+                'expense_constant': carrier.carrier.expense_constant,
+                'terror_fee': total_fee
             })
-
-
-        for c in carriers:
-            print c['class_codes']
 
         request.session['carriers'] = carriers
         request.session['class_codes'] = class_codes

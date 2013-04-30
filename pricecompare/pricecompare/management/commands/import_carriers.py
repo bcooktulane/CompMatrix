@@ -13,10 +13,9 @@ class Command(BaseCommand):
         for row in cr:
             print row_count
             row_count += 1
-            (state, code, group, name, premium) = row[0:5]
-            if state == "State":
-                continue
-            lcm = row[10]
+            #(state, code, group, name, premium) = row[0:5]
+            (state, name, premium, lcm, constant) = row[0:5]
+
             premium = premium.replace('$','').replace(',','').strip()
             if premium == "N/A":
                 premium=None
@@ -25,17 +24,16 @@ class Command(BaseCommand):
                 premium = -premium
                 print premium
 
-            code = int(code)
-            group = int(group)
             name = name.strip()
+            constant = constant.replace('$', '')
 
             state = State.objects.get(name=state.strip())
-            carrier, created = Carrier.objects.get_or_create(
-                code=code, group=group)
+            carrier, created = Carrier.objects.get_or_create(name=name)
             if created:
-                carrier.name = name
-                carrier.save()
-                print "create carrier"
+                print "created"
+            print constant
+            carrier.expense_constant = constant
+            carrier.save()
 
             try:
                 carrier_state = CarrierState.objects.get(
@@ -50,4 +48,3 @@ class Command(BaseCommand):
                     lcm = lcm)
                 carrier_state.save()
                 print "created carrier state"
-

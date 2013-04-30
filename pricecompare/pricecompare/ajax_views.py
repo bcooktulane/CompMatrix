@@ -45,7 +45,6 @@ class ClassCodeView(JSONResponseMixin, View):
         for l in lc:
             codes.append({
                 'code': l.class_code.code,
-                'name': l.class_code.name,
             })
 
         return self.render_to_response({'codes':codes})

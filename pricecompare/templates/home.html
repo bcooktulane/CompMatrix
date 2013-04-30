@@ -5,7 +5,14 @@
 <style>
 .span35{
   width:112px
-  }
+}
+#detail_view{
+  display:none;
+  position:absolute;
+  background-color:#efefef;
+  border:2px solid #ccc;
+  padding:10px;
+}
 </style>
 {% endblock %}
 
@@ -83,7 +90,60 @@
 
 <!-- Quote View -->
 {% if request.session.carriers %}
+<!--<div id="detail_view">
+  <h3 id="details_name">Name</h3>
+  <button type="submit" class="btn">Close</button>
+</div>-->
+{% if carrier %}
+<h3>{{ carrier.name|title }}</h3>
+
 <table class="table">
+  <thead>
+    <tr>
+      <th>Class Code</th>
+      <th>Rate</th>
+      <th>Payroll</th>
+      <th>Premium</th>
+    </tr>
+  {% for ccode in carrier_data.class_codes %}
+  <tr>
+    <td>
+      {{ ccode.code.class_code }}
+    </td>
+    <td> {{ ccode.rate }}</td>
+    <td>${{ ccode.code.payroll|intcomma }}</td>
+    <td>${{ ccode.premium|intcomma}}</td>
+  </tr>
+  {% endfor %}
+  <tr><td colspan="4">&nbsp;</td></tr>
+  <tr>
+    <td></td>
+    <td>Modification Factor</td>
+    <td>{{ request.session.form.mod }}</td>
+    <td>${{ carrier_data.total_mod|intcomma }}</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>Expense Constant</td>
+    <td></td>
+    <td>${{ carrier_data.expense_constant|intcomma }}</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>Terrorism Fee</td>
+    <td></td>
+    <td>${{ carrier_data.terror_fee|intcomma }}</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td><strong>Estimate</strong></td>
+    <td><strong>${{ carrier_data.estimate|intcomma }}</strong></td>
+  </tr>
+</table>
+
+{% else %}
+<table class="table" id="table_view">
   <thead>
     <tr>
       <th>Carrier</th>
@@ -91,14 +151,17 @@
       {% for cc in num_class_codes %}
         <th>Rate {{ forloop.counter }}</th>
         {% endfor %}
-      <th>Min</th>
       <th>Max</th>
+      <th>Manual</th>
+      <th>Min</th>
       <th>Estimate</th>
     </tr>
   </thead>
   {% for c in request.session.carriers %}
   <tr>
-    <td><input type="checkbox"> &nbsp;<a href="">{{ c.carrier.carrier.name|title }}</a></td>
+    <td>
+      <input type="checkbox"> &nbsp;<a class="carrier_detail" href="{% url "detail" c.carrier.carrier.id %}">{{ c.carrier.carrier.name|title }}</a>
+    </td>
     <td>
       {% if c.carrier.premium < 200000 %}<img src="static/img/red-flag.png">{% endif %}
       {% if c.carrier.premium > 1000000 %}<img src="static/img/green-flag.png">{% endif %}
@@ -106,12 +169,14 @@
     {% for cc in c.class_codes %}
       <td>{{ cc.rate }}</td>
     {% endfor %}
-    <td>${{ c.min|intcomma }}</td>
     <td>${{ c.max|intcomma }}</td>
-    <td>$-</td>
+    <td>${{ c.manual|intcomma }}</td>
+    <td>${{ c.min|intcomma }}</td>
+    <td>${{ c.estimate|intcomma }}</td>
   </tr>
   {% endfor %}
 </table>
+{% endif %}
 {% endif %}
 
 <!-- End Quote View -->
@@ -160,6 +225,23 @@
     var current_class_code = {{ num_class_codes|length }};
     var search_class_code = 0;
 
+    /*
+    $(window).scroll(function() {
+      var tp = $(this).scrollTop();
+      if (tp > 150){
+        $('#detail_view').css('top', $(this).scrollTop() + "px");
+      }else{
+        $('#detail_view').css('top', "250px");
+      }
+    });
+    $('.carrier_detail').click(function(e){
+      var $table_view = $('#table_view');
+      $('#detail_view').css('width', parseInt($table_view.width()) - 20);
+      
+      $('#details_name').html('testing');
+      $('#detail_view').fadeIn()
+    });
+    */
     $('.search_code').click(function(e){
       var cid = $(this).data('cid');
       search_class_code = cid;

@@ -13,29 +13,25 @@ class Command(BaseCommand):
         for row in cr:
             print row_count
             row_count += 1
-            (state, code, name, group) = row[0:4]
+            (state, code, loss) = row[0:3]
    
             try:
-                loss = Decimal(row[12])
+                loss = Decimal(loss)
             except Exception as e:
                 print e
                 loss = 0 
 
             code = int(code)
-            name = name.strip()
 
             state = State.objects.get(name=state.strip())
-            industry = IndustryGroup.objects.get(name=group)
+            #industry = IndustryGroup.objects.get(name=group)
             
 
             class_code, created = ClassCode.objects.get_or_create(
                 code=code,
-                industry_group=industry,
-                name=name
             )
             if created:
                 print "created"
-
 
             loss_cost, created = LossCost.objects.get_or_create(
                 state=state,
