@@ -118,18 +118,23 @@
   <tr><td colspan="4">&nbsp;</td></tr>
   <tr>
     <td></td>
+    <td>Manual Premium</td>
+    <td></td>
+    <td>$<span id="premium">{{ carrier_data.manual|intcomma }}</span></td>
+  </tr>
+  <tr>
+    <td></td>
     <td>Estimated Debits Credit**</td>
     <td>
       <div id="slider"></div>
-      <div style="text-align:center;" id="percent">25%</div>
+      <div style="text-align:center;" id="percent">0%</div>
     </td>
-    <td>--</td>
+    <td>$<span id="credit">0</span></td>
   </tr>
   <tr>
     <td></td>
     <td>Modification Factor</td>
-    <!--<td>{{ request.session.form.mod }}</td>-->
-    <td><div id="slider"></div></td>
+    <td>{{ request.session.form.mod }}</td>
     <td>${{ carrier_data.total_mod|intcomma }}</td>
   </tr>
   <tr>
@@ -148,7 +153,7 @@
     <td></td>
     <td></td>
     <td><strong>Estimate</strong></td>
-    <td><strong>${{ carrier_data.estimate|intcomma }}</strong></td>
+    <td><strong>$<span id="estimate" data-original="{{ carrier_data.estimate}}">{{ carrier_data.estimate|intcomma }}</span></strong></td>
   </tr>
 </table>
 
@@ -232,16 +237,21 @@
 {% block extra_js %}
 <script>
   $(function(){
-    var current_class_code = {{ num_class_codes|length }};
-    var search_class_code = 0;
-
+    {% if carrier %}
      $( "#slider" ).slider({
-      value:25,
-      min: -75,
-      max: 75,
+      value:0,
+      min: -{{ carrier_data.min_credit }},
+      max: {{ carrier_data.max_credit }},
       step: 5,
       slide: function( event, ui ) {
         $("#percent").html( ui.value + '%');
+        var premium = parseFloat($('#premium').html().replace(',',''));
+        var credit = Math.round(premium * (1+ui.value*0.01)-premium);
+        var $estimate = $('#estimate');
+        var new_estimate = parseInt($estimate.data('original')) + credit;
+
+        $('#credit').html(credit);
+        $('#estimate').html(new_estimate.toFixed(2));
       }
     });
     $( "#amount" ).val( "$" + $( "#slider" ).slider( "value" ) ); 
@@ -262,6 +272,11 @@
       $('#detail_view').fadeIn()
     });
     */
+    {% endif %}
+
+    var current_class_code = {{ num_class_codes|length }};
+    var search_class_code = 0;
+
     $('.search_code').click(function(e){
       var cid = $(this).data('cid');
       search_class_code = cid;

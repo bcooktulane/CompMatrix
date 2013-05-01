@@ -115,6 +115,8 @@ class QuoteView(TemplateView):
             estimate += total_fee
 
             # Min/max
+            min_credit = Decimal(state.max_debit)
+            max_credit = Decimal(state.max_credit)
             max = manual * Decimal(1+(Decimal(state.max_credit)/100))
             min = manual * Decimal(1-(Decimal(state.max_debit)/100))
 
@@ -124,6 +126,8 @@ class QuoteView(TemplateView):
                 'manual': manual,
                 'estimate': estimate,
                 'fees': fees,
+                'min_credit': min_credit,
+                'max_credit': max_credit,
                 'max': max,
                 'min': min,
                 'total_mod': (total_premium * mod) - total_premium,
