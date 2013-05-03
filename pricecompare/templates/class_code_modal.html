@@ -1,0 +1,36 @@
+{% load humanize %}
+<div class="modal hide fade span2" id="class_code_modal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Find Class Code</h3>
+  </div>
+  <div class="modal-body">
+      <div style="width:40%;float:left;">
+        <select name="state" id="state_select" class="span2">
+          <option value="-"> -- Select a state --</option>
+          {% for state in states %}
+          <option {% if state.abbreviation == request.session.form.state %}selected{%endif %} value="{{state.abbreviation}}">{{ state.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="width:30%;float:left;">
+        <input type="text" name="keyword" id="keyword" class="span2" placeholder="search keyword">
+        <!--<h4>Industry Group</h4>
+        <select name="industry" id="industry_select">
+          <option value="-"> -- Select an industry--</option>
+          {% for industry in industries %}
+          <option value="{{ industry.id }}">{{ industry.name }}</option>
+          {% endfor %}
+        </select>-->
+      </div>
+      <div style="width:30%;float:left;">
+        <button class="btn btn-primary" id="search">Search</button>
+      </div>
+      <div style="height:300px;overflow-y:scroll;width:100%;">
+        <table class="table" id="class_codes"></table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+  </div>
+</div>

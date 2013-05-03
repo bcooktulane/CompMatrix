@@ -1,0 +1,74 @@
+{% load humanize %}
+
+<div class="row">
+    <form action="{% url 'quote' %}" method="post">
+    <div class="span4">
+      <h4>State</h4>
+      <select name="state" id="main_state_select">
+        <option value="-"> -- Select a state --</option>
+        {% for state in states %}
+        <option {% if state.abbreviation == request.session.form.state %}selected{%endif %} value="{{state.abbreviation}}">{{ state.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div id="all_codes" class="span4">
+      <div class="row">
+        <div class="span2">
+          <h4>Class Code</h4>
+        </div>
+        <div class="span2">
+          <h4>Payroll</h4>
+        </div>
+      </div>
+
+      {% for class_code in request.session.class_codes %}
+      <div class="row row_template" id="row_{{forloop.counter}}">
+          <div class="span2">
+            <div class="input-append">
+                <input type="text" class="span1" name="class_code_{{ forloop.counter }}" id="class_code_{{ forloop.counter }}" value="{{ class_code.class_code }}">
+                <!--<button class="btn search_code" data-cid="{{ forloop.counter }}" type="button">search</button>-->
+                <button class="btn remove" data-cid="{{ forloop.counter }}">-</button>
+              </div>
+          </div>
+          <div class="span2">
+            <div class="input-prepend">
+            <span class="add-on">$</span>
+            <input class="span35 payroll" id="prependedInput" type="text" name="payroll_{{ forloop.counter }}" value="{{ class_code.payroll }}">
+            </div>
+          </div>
+        </div>
+      {% empty %}
+      <div class="row row_template" id="row_1">
+          <div class="span2">
+            <div class="input-append">
+                <input type="text" class="span1" name="class_code_1" id="class_code_1" value="">
+                <!--<button class="btn search_code" data-cid="1" type="button">search</button>-->
+                <button class="btn remove" data-cid="1">-</button>
+              </div>
+          </div>
+          <div class="span2">
+            <div class="input-prepend">
+            <span class="add-on">$</span>
+            <input class="span35 payroll" id="prependedInput" type="text" name="payroll_1" value="{{ request.session.form.payroll }}">
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+      <div class="row" id="add_link">
+        <a href="#class_code_modal" id="add_class_code">+ Add Class Code</a>
+      </div>
+    </div>
+
+    <div class="span2">
+      <h4>Mod</h4>
+      <input type="text" class="span2" name="mod" value="{{ request.session.form.mod }}">
+    </div>
+    <div class="span2">
+      <h4>&nbsp;</h4>
+      <button class="btn btn-primary">Get Quote</button>
+    </div>
+    {% csrf_token %}
+  </form>
+</div>
