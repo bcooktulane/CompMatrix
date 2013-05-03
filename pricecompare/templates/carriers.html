@@ -1,5 +1,13 @@
 {% load humanize %}
 
+<style>
+  thead{
+    background:white;
+  }
+</style>
+<div id="compare_block">
+  <button disabled="disabled" id="compare" class="btn btn-small btn-success">Compare Carriers</button>
+</div>
 <table class="table" id="table_view">
   <thead>
     <tr>
@@ -17,7 +25,7 @@
   {% for c in request.session.carriers %}
   <tr>
     <td>
-      <input type="checkbox"> &nbsp;<a class="carrier_detail" href="{% url "detail" c.carrier.carrier.id %}">{{ c.carrier.carrier.name|title }}</a>
+      <input class="select" type="checkbox" name="compare_{{ forloop.counter }}"> &nbsp;<a class="carrier_detail" href="{% url "detail" c.carrier.carrier.id %}">{{ c.carrier.carrier.name|title }}</a>
     </td>
     <td>
       {% if c.carrier.premium < 200000 %}<img src="static/img/red-flag.png">{% endif %}

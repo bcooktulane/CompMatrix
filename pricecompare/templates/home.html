@@ -6,12 +6,21 @@
 .span35{
   width:112px
 }
+.popped{
+  background-color:#efefef;
+  border:2px solid #ccc;
+  border-top:0;
+  padding:10px;
+}
 #detail_view{
   display:none;
   position:absolute;
   background-color:#efefef;
   border:2px solid #ccc;
   padding:10px;
+}
+td.selected{
+  background:#e2ffe9;
 }
 </style>
 {% endblock %}
@@ -73,7 +82,54 @@
 
     var current_class_code = {{ num_class_codes|length }};
     var search_class_code = 0;
+    var number_selected = 0;
 
+    $('.select').each(function(obj){
+      if (this.checked){
+        $(this).parents('tr').children('td').addClass("selected");
+        number_selected++;
+      }else{
+        $(this).parents('tr').children('td').removeClass("selected");
+      }
+    });
+    //$('table').stickyTableHeaders();
+    var popped = false;
+    $(window).scroll(function() {
+      var tp = $(this).scrollTop();
+      if (tp > 190){
+        if (!popped){
+          //first time
+          $('#compare_block').css('width', parseInt($('#table_view').width()) - 20);
+        }
+        popped = true;
+        $('#compare_block').css('position', 'absolute').addClass('popped');
+        $('#compare_block').css('top', $(this).scrollTop() + "px");
+      }else{
+        popped = false;
+        $('#compare_block').css('position', "relative").css('top','0px').removeClass('popped');
+      }
+    });
+
+
+    $('.select').change(function(e){
+      if (this.checked){
+        if (number_selected >= 3){
+          alert("You can only compare three carriers at a time");
+          $(this).attr("checked", false);
+          return;
+        }
+        number_selected++;
+        $(this).parents('tr').children('td').addClass("selected");
+      }else{
+        number_selected--;
+        $(this).parents('tr').children('td').removeClass("selected");
+      }
+      if (number_selected > 1){
+        $('#compare').attr("disabled", false);
+      }else{
+        $('#compare').attr("disabled", true);
+      }
+    });
     /*
     $('.search_code').click(function(e){
       var cid = $(this).data('cid');
