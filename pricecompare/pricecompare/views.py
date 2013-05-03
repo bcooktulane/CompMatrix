@@ -48,10 +48,13 @@ class QuoteView(TemplateView):
         # Get the loss cost
         class_codes = []
 
-        for var in request.POST:
-            if 'class_code_' in var:
-                num = var.replace('class_code_', '')
-                class_code = request.POST.get(var)
+        request.session['form'] = request.POST
+        # Odd way of doing this but I need to keep the order when there is no
+        # order so this is what I've done.
+
+        for num in range(1,6):
+            try:
+                class_code = request.POST.get('class_code_%d' % num)
                 payroll = request.POST.get('payroll_%s' % num)
                 payroll = Decimal(payroll)
                 try:
@@ -73,8 +76,12 @@ class QuoteView(TemplateView):
                     raise AssertionError("LostCost not found")
                 except TypeError:
                     print "Payroll is wrong"
+            except Exception as e:
+                print e
 
         mod = Decimal(request.POST.get('mod'))
+        if not class_codes:
+            return redirect('home')
 
         # Get the carriers
         carriers = []
@@ -137,6 +144,5 @@ class QuoteView(TemplateView):
 
         request.session['carriers'] = carriers
         request.session['class_codes'] = class_codes
-        request.session['form'] = request.POST
 
         return redirect('home')

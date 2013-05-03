@@ -40,32 +40,34 @@
       </div>
 
       {% for class_code in request.session.class_codes %}
-        <div class="row" id="row_template">
+      <div class="row row_template" id="row_{{forloop.counter}}">
           <div class="span2">
             <div class="input-append">
                 <input type="text" class="span1" name="class_code_{{ forloop.counter }}" id="class_code_{{ forloop.counter }}" value="{{ class_code.class_code }}">
-                <button class="btn search_code" data-cid="{{ forloop.counter }}" type="button">search</button>
+                <!--<button class="btn search_code" data-cid="{{ forloop.counter }}" type="button">search</button>-->
+                <button class="btn remove" data-cid="{{ forloop.counter }}">-</button>
               </div>
           </div>
           <div class="span2">
             <div class="input-prepend">
             <span class="add-on">$</span>
-            <input class="span35" id="prependedInput" type="text" name="payroll_{{ forloop.counter }}" value="{{ class_code.payroll }}">
+            <input class="span35 payroll" id="prependedInput" type="text" name="payroll_{{ forloop.counter }}" value="{{ class_code.payroll }}">
             </div>
           </div>
         </div>
       {% empty %}
-        <div class="row" id="row_template">
+      <div class="row row_template" id="row_1">
           <div class="span2">
             <div class="input-append">
                 <input type="text" class="span1" name="class_code_1" id="class_code_1" value="">
-                <button class="btn search_code" data-cid="1" type="button">search</button>
+                <!--<button class="btn search_code" data-cid="1" type="button">search</button>-->
+                <button class="btn remove" data-cid="1">-</button>
               </div>
           </div>
           <div class="span2">
             <div class="input-prepend">
             <span class="add-on">$</span>
-            <input class="span35" id="prependedInput" type="text" name="payroll_1" value="{{ request.session.form.payroll }}">
+            <input class="span35 payroll" id="prependedInput" type="text" name="payroll_1" value="{{ request.session.form.payroll }}">
             </div>
           </div>
         </div>
@@ -118,6 +120,12 @@
   <tr><td colspan="4">&nbsp;</td></tr>
   <tr>
     <td></td>
+    <td>Modification Factor</td>
+    <td>{{ request.session.form.mod }}</td>
+    <td>${{ carrier_data.total_mod|intcomma }}</td>
+  </tr>
+  <tr>
+    <td></td>
     <td>Manual Premium</td>
     <td></td>
     <td>$<span id="premium">{{ carrier_data.manual|intcomma }}</span></td>
@@ -130,12 +138,6 @@
       <div style="text-align:center;" id="percent">0%</div>
     </td>
     <td>$<span id="credit">0</span></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td>Modification Factor</td>
-    <td>{{ request.session.form.mod }}</td>
-    <td>${{ carrier_data.total_mod|intcomma }}</td>
   </tr>
   <tr>
     <td></td>
@@ -277,29 +279,47 @@
     var current_class_code = {{ num_class_codes|length }};
     var search_class_code = 0;
 
+    /*
     $('.search_code').click(function(e){
       var cid = $(this).data('cid');
       search_class_code = cid;
       $('#class_code_modal').modal('show')
+    });*/
+
+    $('.remove').click(function(e){
+      var row = $(this).data('cid');
+      $('#row_' + row).remove();
+      e.preventDefault();
     });
 
     $('#add_class_code').click(function(e){
       e.preventDefault();
+      if ($('.payroll').length >= 5){
+        alert('We currently only support give class codes');
+        return;
+      }
       current_class_code++;
-      var $new_code = $('#row_template').html();
+      var $new_code = $('.row_template').html();
       $new_code = $new_code.replace('class_code_1','class_code_' + current_class_code);
       $new_code = $new_code.replace('class_code_1','class_code_' + current_class_code);
       $new_code = $new_code.replace('payroll_1','payroll_' + current_class_code);
-      var $new_code = $('<div class="row" />').append($new_code);
+      var $new_code = $('<div class="row" id="row_' + current_class_code +'"/>').append($new_code);
       $new_code.find('input').val('');
       $new_code.insertBefore('#add_link');
 
       $new_code.find('button').data('cid',current_class_code);
-      $new_code.find('button').click(function(e){
+
+      $('.remove').click(function(e){
+        var row = $(this).data('cid');
+        $('#row_' + row).remove();
+        e.preventDefault();
+      });
+
+      /*$new_code.find('button').click(function(e){
         var cid = $(this).data('cid');
         search_class_code = cid;
         $('#class_code_modal').modal('show')
-      });
+      });*/
     });
 
     $('#main_state_select').change(function(e){

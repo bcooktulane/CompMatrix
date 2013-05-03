@@ -56,7 +56,7 @@ class LossCost(models.Model):
 class CarrierState(models.Model):
     carrier = models.ForeignKey(Carrier)
     state = models.ForeignKey(State)
-    lcm = models.DecimalField(decimal_places=2, max_digits=10)
+    lcm = models.DecimalField(decimal_places=3, max_digits=10)
     premium = models.DecimalField(decimal_places=2, max_digits=20, null=True, blank=True)
 
     def __unicode__(self):
