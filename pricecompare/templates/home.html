@@ -29,7 +29,9 @@ td.selected{
 {% include "quote_form.html" %}
 
 {% if request.session.carriers %}
-  {% if carrier %}
+  {% if compare %}
+    {% include "compare.html" %}
+  {% elif carrier %}
     {% include "carrier_view.html" %}
   {% else %}
     {% include "carriers.html" %}
