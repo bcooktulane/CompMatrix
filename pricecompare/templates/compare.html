@@ -6,16 +6,13 @@
     <td>
       <table class="table" style="font-weight:bold;">
       <tr><td>&nbsp;</td></tr>
-      <tr><td>Class Code</td></tr>
+      {% for ccode in carrier_data.class_codes %}
+      <tr><td>Class Code ({{ccode.code.class_code}})</td></tr>
       <tr><td>Loss Cost</td></tr>
       <tr><td>Carrier Rate</td></tr>
       <tr><td>Payroll</td></tr>
       <tr><td>Premium</td></tr>
-      <tr><td>Class Code</td></tr>
-      <tr><td>Loss Cost</td></tr>
-      <tr><td>Carrier Rate</td></tr>
-      <tr><td>Payroll</td></tr>
-      <tr><td>Premium</td></tr>
+      {% endfor %}
       <tr><td>Unmodified Premium</td></tr>
       <tr><td>Mod</td></tr>
       <tr><td>Modified Premium</td></tr>
@@ -33,8 +30,7 @@
   <tr>
     <td>{{ carrier.name|title }}</td>
     </tr>{% for ccode in carrier_data.class_codes %}
-  <tr>
-    <td>{{ ccode.code.class_code }}</td>
+    <tr><td>&nbsp;</td>
   </tr>
   <tr>
     <td> {{ ccode.code.loss.loss_cost }}</td>
