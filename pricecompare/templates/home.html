@@ -11,6 +11,9 @@
   border:2px solid #ccc;
   border-top:0;
   padding:10px;
+  -webkit-box-shadow: 0px 8px 10px rgba(50, 50, 50, 0.43);
+  -moz-box-shadow:    0px 8px 10px rgba(50, 50, 50, 0.43);
+  box-shadow:         0px 8px 10px rgba(50, 50, 50, 0.43);
 }
 #detail_view{
   display:none;
@@ -29,7 +32,7 @@ td.selected{
 {% include "quote_form.html" %}
 
 {% if request.session.carriers %}
-  {% if compare %}
+  {% if compare_carriers %}
     {% include "compare.html" %}
   {% elif carrier %}
     {% include "carrier_view.html" %}
@@ -85,9 +88,12 @@ td.selected{
     var current_class_code = {{ num_class_codes|length }};
     var search_class_code = 0;
     var number_selected = 0;
+    var compares = [{{ request.session.compares }}];
 
-    $('.select').each(function(obj){
-      if (this.checked){
+    $('.select').each(function(){
+      var _id = $(this).attr('name').replace('compare_','');
+      if (this.checked || $.inArray(parseInt(_id), compares) >= 0){
+        this.checked = true;
         $(this).parents('tr').children('td').addClass("selected");
         number_selected++;
       }else{
@@ -112,6 +118,16 @@ td.selected{
       }
     });
 
+    $('#compare').click(function(e){
+      var compare_ids = [];
+      $('input[type=checkbox]').each(function(){
+        if (this.checked){
+          compare_ids.push($(this).attr('name').replace('compare_',''));
+        }
+      });
+      var url = '/compare?ids=' + compare_ids.join()
+      window.location.href = url;
+    });
 
     $('.select').change(function(e){
       if (this.checked){

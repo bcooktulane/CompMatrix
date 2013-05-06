@@ -1,38 +1,76 @@
 {% load humanize %}
 
-<div id="compare_block">
-  <button disabled="disabled" id="compare" class="btn btn-small btn-success">Compare Carriers</button>
-</div>
-<table class="table" id="table_view">
-  <thead>
-    <tr>
-      <th>Carrier</th>
-      <th>&nbsp;</th>
-      {% for cc in num_class_codes %}
-        <th>Rate {{ forloop.counter }}</th>
-        {% endfor %}
-      <th>Max</th>
-      <th>Manual</th>
-      <th>Min</th>
-      <th>Estimate</th>
-    </tr>
-  </thead>
-  {% for c in request.session.carriers %}
+<h1>Compare</h1>
+
+<table style="width:100%;"><tr>
+    <td>
+      <table class="table" style="font-weight:bold;">
+      <tr><td>&nbsp;</td></tr>
+      <tr><td>Class Code</td></tr>
+      <tr><td>Loss Cost</td></tr>
+      <tr><td>Carrier Rate</td></tr>
+      <tr><td>Payroll</td></tr>
+      <tr><td>Premium</td></tr>
+      <tr><td>Class Code</td></tr>
+      <tr><td>Loss Cost</td></tr>
+      <tr><td>Carrier Rate</td></tr>
+      <tr><td>Payroll</td></tr>
+      <tr><td>Premium</td></tr>
+      <tr><td>Unmodified Premium</td></tr>
+      <tr><td>Mod</td></tr>
+      <tr><td>Modified Premium</td></tr>
+      <tr><td>Debut/Credit Adjustments</td></tr>
+      <tr><td>Debit</td></tr>
+      <tr><td>Fees</td></tr>
+      <tr><td>Estimate</td></tr>
+    </table>
+    </td>
+    {% for compare in compare_carriers %}
+      {% with carrier=compare.carrier %}
+      {% with carrier_data=compare.carrier_data %}
+    <td>
+<table class="table">
   <tr>
-    <td>
-      <input class="select" type="checkbox" name="compare_{{ forloop.counter }}"> &nbsp;<a class="carrier_detail" href="{% url "detail" c.carrier.carrier.id %}">{{ c.carrier.carrier.name|title }}</a>
-    </td>
-    <td>
-      {% if c.carrier.premium < 200000 %}<img src="static/img/red-flag.png">{% endif %}
-      {% if c.carrier.premium > 1000000 %}<img src="static/img/green-flag.png">{% endif %}
-    </td>
-    {% for cc in c.class_codes %}
-      <td>{{ cc.rate }}</td>
-    {% endfor %}
-    <td>${{ c.max|intcomma }}</td>
-    <td>${{ c.manual|intcomma }}</td>
-    <td>${{ c.min|intcomma }}</td>
-    <td>${{ c.estimate|intcomma }}</td>
+    <td>{{ carrier.name|title }}</td>
+    </tr>{% for ccode in carrier_data.class_codes %}
+  <tr>
+    <td>{{ ccode.code.class_code }}</td>
   </tr>
-  {% endfor %}
+  <tr>
+    <td> {{ ccode.code.loss.loss_cost }}</td>
+  </tr>
+  <tr>
+    <td> {{ ccode.rate }}</td>
+  </tr>
+  <tr>
+    <td>${{ ccode.code.payroll|intcomma }}</td>
+  </tr>
+  <tr>
+    <td>${{ ccode.premium|intcomma}}</td>
+  </tr>{% endfor %}<tr>
+    <td>${{ carrier_data.total_mod|intcomma }}</td>
+  </tr>
+  <tr>
+    <td>{{ request.session.form.mod }}</td>
+  </tr>
+  <tr>
+    <td>$<span id="premium">{{ carrier_data.manual|intcomma }}</span></td>
+  </tr>
+  <tr>
+    <td>$<span id="credit">0</span></td>
+  </tr>
+  <tr>
+    <td>${{ carrier_data.expense_constant|intcomma }}</td>
+  </tr>
+  <tr>
+    <td>${{ carrier_data.terror_fee|intcomma }}</td>
+  </tr>
+  <tr>
+    <td><strong>$<span id="estimate" data-original="{{ carrier_data.estimate}}">{{ carrier_data.estimate|intcomma }}</span></strong></td>
+  </tr>
 </table>
+</td>
+{% endwith %}
+{% endwith %}
+{% endfor %}
+</tr></table>
