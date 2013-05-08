@@ -121,6 +121,8 @@ class QuoteView(TemplateView):
             total_payroll = 0
             total_premium = 0
             estimate = 0
+            total_final = 0
+
             for class_code in class_codes:
                 rate = carrier.lcm * class_code['loss'].loss_cost
 
@@ -128,7 +130,7 @@ class QuoteView(TemplateView):
                 premium = (class_code['payroll']/100) * rate
                 total_payroll += class_code['payroll']
                 total_premium += premium
-
+                total_final += final
                 rates.append({
                     'rate': rate,
                     'final': final,
@@ -157,6 +159,7 @@ class QuoteView(TemplateView):
                 'carrier': carrier,
                 'class_codes': rates,
                 'manual': manual,
+                'mod_premium': total_final, 
                 'estimate': estimate,
                 'fees': fees,
                 'min_credit': min_credit,

@@ -17,8 +17,8 @@
       <tr><td>Mod</td></tr>
       <tr><td>Modified Premium</td></tr>
       <tr><td>Debut/Credit Adjustments</td></tr>
-      <tr><td>Debit</td></tr>
-      <tr><td>Fees</td></tr>
+      <tr><td>Expense Constant</td></tr>
+      <tr><td>Terrorism Fee</td></tr>
       <tr><td>Estimate</td></tr>
     </table>
     </td>
@@ -28,8 +28,9 @@
     <td>
 <table class="table">
   <tr>
-    <td>{{ carrier.name|title }}</td>
-    </tr>{% for ccode in carrier_data.class_codes %}
+    <td><strong>{{ carrier.name|title }}</strong> ({{ carrier_data.carrier.lcm }})</td>
+  </tr>
+  {% for ccode in carrier_data.class_codes %}
     <tr><td>&nbsp;</td>
   </tr>
   <tr>
@@ -43,14 +44,17 @@
   </tr>
   <tr>
     <td>${{ ccode.premium|intcomma}}</td>
-  </tr>{% endfor %}<tr>
-    <td>${{ carrier_data.total_mod|intcomma }}</td>
+  </tr>
+  {% endfor %}
+  <tr>
+    <!-- Unmodified premium -->
+    <td>${{ carrier_data.manual|intcomma }}</td>
   </tr>
   <tr>
     <td>{{ request.session.form.mod }}</td>
   </tr>
   <tr>
-    <td>$<span id="premium">{{ carrier_data.manual|intcomma }}</span></td>
+    <td>$<span id="premium">{{ carrier_data.mod_premium|intcomma }}</span></td>
   </tr>
   <tr>
     <td>$<span id="credit">0</span></td>
