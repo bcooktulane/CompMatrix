@@ -1,7 +1,7 @@
 {% load humanize %}
 
 <div class="row">
-    <form action="{% url 'quote' %}" method="post">
+    <form action="{% url 'quote' %}" method="post" id="quote_form">
     <div class="span4">
       <h4>State</h4>
       <select name="state" id="main_state_select">
@@ -26,7 +26,7 @@
       <div class="row row_template" id="row_{{forloop.counter}}">
           <div class="span2">
             <div class="input-append">
-                <input type="text" class="span1" name="class_code_{{ forloop.counter }}" id="class_code_{{ forloop.counter }}" value="{{ class_code.class_code }}">
+                <input maxlength="4" type="text" class="span1 class_code" name="class_code_{{ forloop.counter }}" id="class_code_{{ forloop.counter }}" value="{{ class_code.class_code }}">
                 <!--<button class="btn search_code" data-cid="{{ forloop.counter }}" type="button">search</button>-->
                 <button class="btn remove" data-cid="{{ forloop.counter }}">-</button>
               </div>
@@ -34,7 +34,7 @@
           <div class="span2">
             <div class="input-prepend">
             <span class="add-on">$</span>
-            <input class="span35 payroll" id="prependedInput" type="text" name="payroll_{{ forloop.counter }}" value="{{ class_code.payroll }}">
+            <input maxlength="7" class="span35 payroll" id="prependedInput" type="text" name="payroll_{{ forloop.counter }}" value="{{ class_code.payroll }}">
             </div>
           </div>
         </div>
@@ -63,11 +63,11 @@
 
     <div class="span2">
       <h4>Mod</h4>
-      <input type="text" class="span2" name="mod" value="{{ request.session.form.mod }}">
+      <input type="text" class="span2" id="mod" name="mod" value="{{ request.session.form.mod }}">
     </div>
     <div class="span2">
       <h4>&nbsp;</h4>
-      <button class="btn btn-primary">Get Quote</button>
+      <button class="btn btn-primary" id="quote_button" >Get Quote</button>
     </div>
     {% csrf_token %}
   </form>

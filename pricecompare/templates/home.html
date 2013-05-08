@@ -90,6 +90,23 @@ td.selected{
     var number_selected = 0;
     var compares = [{{ request.session.compares }}];
 
+    /* Masking */
+    $('.class_code').inputmask("integer", {rightAlignNumerics: false});
+    $('.payroll').inputmask("integer", {rightAlignNumerics: false});
+    $('#mod').inputmask("decimal", {digits:2,rightAlignNumerics: false});
+    /* End Masking */
+
+    /* Validation */
+
+    $('#quote_button').click(function(e){
+      var mod = parseFloat($('#mod').val());
+      if (mod < 0.5 || mod > 3){
+        alert("Your mod must be between 0.5 and 3");
+        e.preventDefault();
+      }
+    });
+    /* End Validation */
+
     $('.select').each(function(){
       var _id = $(this).attr('name').replace('compare_','');
       if (this.checked || $.inArray(parseInt(_id), compares) >= 0){
@@ -156,9 +173,11 @@ td.selected{
     });*/
 
     $('.remove').click(function(e){
-      var row = $(this).data('cid');
-      $('#row_' + row).remove();
       e.preventDefault();
+      if ($('.class_code').length > 1){
+        var row = $(this).data('cid');
+        $('#row_' + row).remove();
+      }
     });
 
     $('#add_class_code').click(function(e){
@@ -176,13 +195,12 @@ td.selected{
       $new_code.find('input').val('');
       $new_code.insertBefore('#add_link');
 
+      //Masking
+      $('.class_code').inputmask("integer", {rightAlignNumerics: false});
+      $('.payroll').inputmask("integer", {rightAlignNumerics: false});
+
       $new_code.find('button').data('cid',current_class_code);
 
-      $('.remove').click(function(e){
-        var row = $(this).data('cid');
-        $('#row_' + row).remove();
-        e.preventDefault();
-      });
 
       /*$new_code.find('button').click(function(e){
         var cid = $(this).data('cid');
