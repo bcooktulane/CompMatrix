@@ -26,7 +26,7 @@
       <div class="row row_template" id="row_{{forloop.counter}}">
           <div class="span2">
             <div class="input-append">
-                <input maxlength="4" type="text" class="span1 class_code" name="class_code_{{ forloop.counter }}" id="class_code_{{ forloop.counter }}" value="{{ class_code.class_code }}">
+                <input maxlength="4" type="text" class="span1 class_code" name="class_code_{{ forloop.counter }}" id="class_code_{{ forloop.counter }}" value="{{ class_code.code.code|stringformat:"04d" }}">
                 <!--<button class="btn search_code" data-cid="{{ forloop.counter }}" type="button">search</button>-->
                 <button class="btn remove" data-cid="{{ forloop.counter }}">-</button>
               </div>

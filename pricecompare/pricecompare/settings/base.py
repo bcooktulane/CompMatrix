@@ -1,5 +1,4 @@
-"""Common settings and globals."""
-
+import dj_database_url
 
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
@@ -43,15 +42,12 @@ MANAGERS = ADMINS
 
 ########## DATABASE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
+DEFAULT_DB_CONFIG = dj_database_url.config()
+if not DEFAULT_DB_CONFIG:
+        DEFAULT_DB_CONFIG = dj_database_url.parse("postgres://postgres@/pricecompare")
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-    }
+        'default': DEFAULT_DB_CONFIG
 }
 ########## END DATABASE CONFIGURATION
 

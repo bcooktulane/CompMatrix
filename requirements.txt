@@ -1,3 +1,12 @@
 # This file is here because many Platforms as a Service look for
 #	requirements.txt in the root directory of a project.
--r requirements/production.txt
+django==1.5.1
+bpython==0.12
+django-braces==0.2.1
+django-model-utils==1.1.0
+South==0.7.6
+psycopg2==2.4.6
+#dj-database-url
+coverage==3.6
+django-discover-runner==0.2.2
+django-debug-toolbar==0.9.4

@@ -66,23 +66,6 @@ td.selected{
       }
     });
     $( "#amount" ).val( "$" + $( "#slider" ).slider( "value" ) ); 
-    /*
-    $(window).scroll(function() {
-      var tp = $(this).scrollTop();
-      if (tp > 150){
-        $('#detail_view').css('top', $(this).scrollTop() + "px");
-      }else{
-        $('#detail_view').css('top', "250px");
-      }
-    });
-    $('.carrier_detail').click(function(e){
-      var $table_view = $('#table_view');
-      $('#detail_view').css('width', parseInt($table_view.width()) - 20);
-      
-      $('#details_name').html('testing');
-      $('#detail_view').fadeIn()
-    });
-    */
     {% endif %}
 
     var current_class_code = {{ num_class_codes|length }};
@@ -91,7 +74,6 @@ td.selected{
     var compares = [{{ request.session.compares }}];
 
     /* Masking */
-    $('.class_code').inputmask("integer", {rightAlignNumerics: false});
     $('.payroll').inputmask("integer", {rightAlignNumerics: false});
     $('#mod').inputmask("decimal", {digits:2,rightAlignNumerics: false});
     /* End Masking */
@@ -196,7 +178,6 @@ td.selected{
       $new_code.insertBefore('#add_link');
 
       //Masking
-      $('.class_code').inputmask("integer", {rightAlignNumerics: false});
       $('.payroll').inputmask("integer", {rightAlignNumerics: false});
 
       $new_code.find('button').data('cid',current_class_code);
