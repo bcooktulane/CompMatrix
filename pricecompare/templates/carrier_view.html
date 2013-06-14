@@ -1,7 +1,7 @@
 {% load humanize %}
 
 <h3>{{ carrier.name|title }}</h3>
-<table class="table">
+<table class="table class_stats">
   <thead>
     <tr>
       <th>Class Code</th>
@@ -30,16 +30,16 @@
     <td></td>
     <td>Manual Premium</td>
     <td></td>
-    <td>$<span id="premium">{{ carrier_data.manual|intcomma }}</span></td>
+    <td>$<span class="premium">{{ carrier_data.manual|intcomma }}</span></td>
   </tr>
   <tr>
     <td></td>
     <td>Estimated Debits Credit**</td>
     <td>
-      <div id="slider"></div>
-      <div style="text-align:center;" id="percent">0%</div>
+        <div class="slider" data-mincredit="{{ carrier_data.min_credit }}" data-maxcredit="{{ carrier_data.max_credit }}"></div>
+      <div style="text-align:center;" class="percent">0%</div>
     </td>
-    <td>$<span id="credit">0</span></td>
+    <td>$<span class="credit">0</span></td>
   </tr>
   <tr>
     <td></td>
@@ -57,6 +57,6 @@
     <td></td>
     <td></td>
     <td><strong>Estimate</strong></td>
-    <td><strong>$<span id="estimate" data-original="{{ carrier_data.estimate}}">{{ carrier_data.estimate|intcomma }}</span></strong></td>
+    <td><strong>$<span class="estimate" data-original="{{ carrier_data.estimate}}">{{ carrier_data.estimate|intcomma }}</span></strong></td>
   </tr>
 </table>

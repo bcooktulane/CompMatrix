@@ -48,25 +48,31 @@ td.selected{
 {% block extra_js %}
 <script>
   $(function(){
-    {% if carrier %}
-     $( "#slider" ).slider({
+     $( ".slider" ).slider({
       value:0,
-      min: -{{ carrier_data.min_credit }},
-      max: {{ carrier_data.max_credit }},
+      create: function(event, ui) {
+          var min = -parseInt($(event.target).attr('data-mincredit'));
+          var max = parseInt($(event.target).attr('data-maxcredit'));
+          $(event.target).slider("option", "min", min);
+          $(event.target).slider("option", "max", max);
+          console.log(event.target);
+        },
       step: 5,
       slide: function( event, ui ) {
-        $("#percent").html( ui.value + '%');
-        var premium = parseFloat($('#premium').html().replace(',',''));
+          var elPercent = $(event.target).closest('.class_stats').find('.percent');
+          var elPremium = $(event.target).closest('.class_stats').find('.premium');
+          var elEstimate = $(event.target).closest('.class_stats').find('.estimate');
+          var elCredit = $(event.target).closest('.class_stats').find('.credit');
+          elPercent.html( ui.value + '%');
+        var premium = parseFloat(elPremium.html().replace(',',''));
         var credit = Math.round(premium * (1+ui.value*0.01)-premium);
-        var $estimate = $('#estimate');
+        var $estimate = elEstimate;
         var new_estimate = parseInt($estimate.data('original')) + credit;
 
-        $('#credit').html(credit);
-        $('#estimate').html(new_estimate.toFixed(2));
+        elCredit.html(credit);
+        elEstimate.html(new_estimate.toFixed(2));
       }
     });
-    $( "#amount" ).val( "$" + $( "#slider" ).slider( "value" ) ); 
-    {% endif %}
 
     var current_class_code = {{ num_class_codes|length }};
     var search_class_code = 0;
