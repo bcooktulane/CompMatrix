@@ -8,13 +8,14 @@ from pricecompare.models import *
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        cr = csv.reader(open("/tmp/carriers.csv","rb"))
+        cr = csv.reader(open("/vagrant/import_data/carriers.csv","rb"))
         row_count = 0
         for row in cr:
             print row_count
             row_count += 1
-            #(state, code, group, name, premium) = row[0:5]
-            (state, name, premium, lcm, constant) = row[0:5]
+            (state, code, group, name, premium) = row[0:5]
+            lcm = row[9]
+            constant = row[11]
 
             premium = premium.replace('$','').replace(',','').strip()
             if premium == "N/A":
@@ -25,7 +26,7 @@ class Command(BaseCommand):
                 print premium
 
             name = name.strip()
-            constant = constant.replace('$', '')
+            constant = constant.replace('$', '').replace(',','')
 
             state = State.objects.get(name=state.strip())
             carrier, created = Carrier.objects.get_or_create(name=name)

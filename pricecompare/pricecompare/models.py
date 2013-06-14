@@ -7,6 +7,7 @@ class State(models.Model):
     active = models.BooleanField(default=True)
     max_credit = models.IntegerField(default=0)
     max_debit = models.IntegerField(default=0)
+    terrorism_loss = models.DecimalField(decimal_places=2, max_digits=3, default=0)
 
     def __unicode__(self):
         return self.name
@@ -47,11 +48,14 @@ class ClassCode(models.Model):
 
 class LossCost(models.Model):
     state = models.ForeignKey(State)
-    class_code = models.ForeignKey(ClassCode, unique=True)
+    class_code = models.ForeignKey(ClassCode)
     loss_cost = models.DecimalField(decimal_places=2, max_digits=10, default=0)
 
     def __unicode__(self):
         return "%s (%s) %s" % (self.class_code, self.state, self.loss_cost)
+
+    class Meta:
+        unique_together = ('state', 'class_code')
 
 class CarrierState(models.Model):
     carrier = models.ForeignKey(Carrier)
