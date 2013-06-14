@@ -5,7 +5,7 @@ Vagrant.configure("1") do |config|
   config.vm.box = "precise64"
 
   #config.vm.customize(["modifyvm", :id, "--nictype1", "Am79C973"])
-  config.vm.forward_port(5000, 5000)
+  config.vm.forward_port(8000, 8000)
 
   config.vm.provision :chef_client do |chef|
       chef.log_level = :info

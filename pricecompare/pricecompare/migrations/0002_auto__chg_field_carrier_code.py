@@ -10,7 +10,9 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'Carrier.code'
-        db.alter_column(u'pricecompare_carrier', 'code', self.gf('django.db.models.fields.IntegerField')())
+        db.delete_column(u'pricecompare_carrier', 'code')
+        db.add_column(u'pricecompare_carrier', 'code', self.gf('django.db.models.fields.IntegerField')())
+        # db.alter_column(u'pricecompare_carrier', 'code', self.gf('django.db.models.fields.IntegerField')())
 
     def backwards(self, orm):
 

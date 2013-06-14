@@ -1,12 +1,13 @@
-# This file is here because many Platforms as a Service look for
-#	requirements.txt in the root directory of a project.
-django==1.5.1
-bpython==0.12
-django-braces==0.2.1
-django-model-utils==1.1.0
+Django==1.5.1
+Pygments==1.6
 South==0.7.6
-psycopg2==2.4.6
-#dj-database-url
+argparse==1.2.1
+bpython==0.12
 coverage==3.6
-django-discover-runner==0.2.2
+dj-database-url==0.2.1
+django-braces==0.2.1
 django-debug-toolbar==0.9.4
+django-discover-runner==0.2.2
+django-model-utils==1.1.0
+psycopg2==2.4.6
+wsgiref==0.1.2
