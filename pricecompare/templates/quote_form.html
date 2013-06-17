@@ -27,14 +27,13 @@
           <div class="span2">
             <div class="input-append">
                 <input maxlength="4" type="text" class="span1 class_code" name="class_code_{{ forloop.counter }}" id="class_code_{{ forloop.counter }}" value="{{ class_code.code.code|stringformat:"04d" }}">
-                <!--<button class="btn search_code" data-cid="{{ forloop.counter }}" type="button">search</button>-->
                 <button class="btn remove" data-cid="{{ forloop.counter }}">-</button>
               </div>
           </div>
           <div class="span2">
             <div class="input-prepend">
             <span class="add-on">$</span>
-            <input maxlength="7" class="span35 payroll" id="prependedInput" type="text" name="payroll_{{ forloop.counter }}" value="{{ class_code.payroll }}">
+            <input maxlength="7" class="span2 payroll" id="prependedInput" type="text" name="payroll_{{ forloop.counter }}" value="{{ class_code.payroll }}">
             </div>
           </div>
         </div>

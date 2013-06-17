@@ -50,6 +50,7 @@ class LossCost(models.Model):
     state = models.ForeignKey(State)
     class_code = models.ForeignKey(ClassCode)
     loss_cost = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    flags = models.ManyToManyField('ClassFlag', blank=True)
 
     def __unicode__(self):
         return "%s (%s) %s" % (self.class_code, self.state, self.loss_cost)
@@ -65,3 +66,10 @@ class CarrierState(models.Model):
 
     def __unicode__(self):
         return "%s - %s" % (self.carrier, self.state)
+
+class ClassFlag(models.Model):
+    description = models.CharField(max_length=255)
+    flag_color = models.CharField(max_length=10, choices = (('red', 'Red'), ('green', 'Green'), ('yellow', 'Yellow')))
+
+    def __unicode__(self):
+        return self.description

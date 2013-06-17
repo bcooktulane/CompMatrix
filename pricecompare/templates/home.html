@@ -1,33 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
 
-{% block extra_css %}
-<style>
-.span35{
-  width:112px
-}
-.popped{
-  background-color:#efefef;
-  border:2px solid #ccc;
-  border-top:0;
-  padding:10px;
-  -webkit-box-shadow: 0px 8px 10px rgba(50, 50, 50, 0.43);
-  -moz-box-shadow:    0px 8px 10px rgba(50, 50, 50, 0.43);
-  box-shadow:         0px 8px 10px rgba(50, 50, 50, 0.43);
-}
-#detail_view{
-  display:none;
-  position:absolute;
-  background-color:#efefef;
-  border:2px solid #ccc;
-  padding:10px;
-}
-td.selected{
-  background:#e2ffe9;
-}
-</style>
-{% endblock %}
-
 {% block content %}
 {% include "quote_form.html" %}
 
@@ -55,6 +28,8 @@ td.selected{
           var max = parseInt($(event.target).attr('data-maxcredit'));
           $(event.target).slider("option", "min", min);
           $(event.target).slider("option", "max", max);
+          console.log(min);
+          console.log(max);
           console.log(event.target);
         },
       step: 5,
