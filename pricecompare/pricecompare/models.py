@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 
 
@@ -5,8 +6,8 @@ class State(models.Model):
     name = models.CharField(max_length=100)
     abbreviation = models.CharField(max_length=2)
     active = models.BooleanField(default=True)
-    max_credit = models.IntegerField(default=0)
-    max_debit = models.IntegerField(default=0)
+    max_credit = models.DecimalField(decimal_places=2, max_digits=3, default=0)
+    max_debit = models.DecimalField(decimal_places=2, max_digits=3, default=0)
     terrorism_loss = models.DecimalField(decimal_places=2, max_digits=3, default=0)
 
     def __unicode__(self):
@@ -27,6 +28,7 @@ class Carrier(models.Model):
     #code = models.IntegerField()
     #group = models.IntegerField()
     expense_constant = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    states = models.ManyToManyField(State, through='CarrierState')
 
     def __unicode__(self):
         return "%s" % (self.name)
@@ -39,6 +41,7 @@ class IndustryGroup(models.Model):
 
 class ClassCode(models.Model):
     code = models.IntegerField()
+    states = models.ManyToManyField(State, through='LossCost')
     #name = models.CharField(max_length=100)
     #industry_group = models.ForeignKey(IndustryGroup)
 
@@ -63,6 +66,27 @@ class CarrierState(models.Model):
     state = models.ForeignKey(State)
     lcm = models.DecimalField(decimal_places=3, max_digits=10)
     premium = models.DecimalField(decimal_places=2, max_digits=20, null=True, blank=True)
+
+    def set_inputs(self, loss_cost, payroll, mod):
+        self._loss_cost = loss_cost
+        self._payroll = Decimal(payroll)
+        self._mod = Decimal(mod)
+
+    def rate(self):
+        return self.lcm * self._loss_cost.loss_cost
+
+    def manual_price(self):
+        return (self._payroll / 100) * self.rate() * self._mod
+
+    def max_price(self):
+        return self.manual_price() * (1+self.state.max_debit)
+
+    def min_price(self):
+        return self.manual_price() * (1+self.state.max_credit)
+
+    def estimate(self):
+        terrorism_fee = (self._payroll / 100) * self.state.terrorism_loss
+        return self.manual_price() + terrorism_fee + self.carrier.expense_constant
 
     def __unicode__(self):
         return "%s - %s" % (self.carrier, self.state)

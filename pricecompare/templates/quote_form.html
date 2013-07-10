@@ -1,7 +1,7 @@
 {% load humanize %}
 
 <div class="row">
-    <form action="{% url 'quote' %}" method="post" id="quote_form">
+    <form action="{% url 'quote' %}" method="get" id="quote_form">
     <div class="span4">
       <h4>State</h4>
       <select name="state" id="main_state_select">
@@ -26,14 +26,14 @@
       <div class="row row_template" id="row_{{forloop.counter}}">
           <div class="span2">
             <div class="input-append">
-                <input maxlength="4" type="text" class="span1 class_code" name="class_code_{{ forloop.counter }}" id="class_code_{{ forloop.counter }}" value="{{ class_code.code.code|stringformat:"04d" }}">
+                <input maxlength="4" type="text" class="span1 class_code" name="class_code[]" id="class_code_{{ forloop.counter }}" value="{{ class_code.code.code|stringformat:"04d" }}">
                 <button class="btn remove" data-cid="{{ forloop.counter }}">-</button>
               </div>
           </div>
           <div class="span2">
             <div class="input-prepend">
             <span class="add-on">$</span>
-            <input maxlength="7" class="span2 payroll" id="prependedInput" type="text" name="payroll_{{ forloop.counter }}" value="{{ class_code.payroll }}">
+            <input maxlength="7" class="span2 payroll" id="prependedInput" type="text" name="payroll[]" value="{{ class_code.payroll }}">
             </div>
           </div>
         </div>
@@ -42,14 +42,13 @@
           <div class="span2">
             <div class="input-append">
                 <input type="text" class="span1" name="class_code_1" id="class_code_1" value="">
-                <!--<button class="btn search_code" data-cid="1" type="button">search</button>-->
                 <button class="btn remove" data-cid="1">-</button>
               </div>
           </div>
           <div class="span2">
             <div class="input-prepend">
             <span class="add-on">$</span>
-            <input class="span35 payroll" id="prependedInput" type="text" name="payroll_1" value="{{ request.session.form.payroll }}">
+            <input class="span2 payroll" id="prependedInput" type="text" name="payroll_1" value="{{ request.session.form.payroll }}">
             </div>
           </div>
         </div>
@@ -68,6 +67,5 @@
       <h4>&nbsp;</h4>
       <button class="btn btn-primary" id="quote_button" >Get Quote</button>
     </div>
-    {% csrf_token %}
   </form>
 </div>

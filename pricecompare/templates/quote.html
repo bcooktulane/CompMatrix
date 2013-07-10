@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+{% include "quote_form.html" %}
+
+{% if carrier_states %}
+  {% if compare_carriers %}
+    {% include "compare.html" %}
+  {% elif carrier %}
+    {% include "carrier_view.html" %}
+  {% else %}
+    {% include "carriers.html" %}
+  {% endif %}
+{% endif %}
+
+{% include "class_code_modal.html" %}
+
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+  $(function(){
+     $( ".slider" ).slider({
+      value:0,
+      create: function(event, ui) {
+          var min = -parseInt($(event.target).attr('data-mincredit'));
+          var max = parseInt($(event.target).attr('data-maxcredit'));
+          $(event.target).slider("option", "min", min);
+          $(event.target).slider("option", "max", max);
+          console.log(min);
+          console.log(max);
+          console.log(event.target);
+        },
+      step: 5,
+      slide: function( event, ui ) {
+          var elPercent = $(event.target).closest('.class_stats').find('.percent');
+          var elPremium = $(event.target).closest('.class_stats').find('.premium');
+          var elEstimate = $(event.target).closest('.class_stats').find('.estimate');
+          var elCredit = $(event.target).closest('.class_stats').find('.credit');
+          elPercent.html( ui.value + '%');
+        var premium = parseFloat(elPremium.html().replace(',',''));
+        var credit = Math.round(premium * (1+ui.value*0.01)-premium);
+        var $estimate = elEstimate;
+        var new_estimate = parseInt($estimate.data('original')) + credit;
+
+        elCredit.html(credit);
+        elEstimate.html(new_estimate.toFixed(2));
+      }
+    });
+
+    var current_class_code = {{ num_class_codes|length }};
+    var search_class_code = 0;
+    var number_selected = 0;
+    var compares = [{{ request.session.compares }}];
+
+    /* Masking */
+    $('.payroll').inputmask("integer", {rightAlignNumerics: false});
+    $('#mod').inputmask("decimal", {digits:2,rightAlignNumerics: false});
+    /* End Masking */
+
+    /* Validation */
+
+    $('#quote_button').click(function(e){
+      var mod = parseFloat($('#mod').val());
+      if (mod < 0.5 || mod > 3){
+        alert("Your mod must be between 0.5 and 3");
+        e.preventDefault();
+      }
+    });
+    /* End Validation */
+
+    $('.select').each(function(){
+      var _id = $(this).attr('name').replace('compare_','');
+      if (this.checked || $.inArray(parseInt(_id), compares) >= 0){
+        this.checked = true;
+        $(this).parents('tr').children('td').addClass("selected");
+        number_selected++;
+      }else{
+        $(this).parents('tr').children('td').removeClass("selected");
+      }
+    });
+    //$('table').stickyTableHeaders();
+    var popped = false;
+    $(window).scroll(function() {
+      var tp = $(this).scrollTop();
+      if (tp > 190){
+        if (!popped){
+          //first time
+          $('#compare_block').css('width', parseInt($('#table_view').width()) - 20);
+        }
+        popped = true;
+        $('#compare_block').css('position', 'absolute').addClass('popped');
+        $('#compare_block').css('top', $(this).scrollTop() + "px");
+      }else{
+        popped = false;
+        $('#compare_block').css('position', "relative").css('top','0px').removeClass('popped');
+      }
+    });
+
+    $('#compare').click(function(e){
+      var compare_ids = [];
+      $('input[type=checkbox]').each(function(){
+        if (this.checked){
+          compare_ids.push($(this).attr('name').replace('compare_',''));
+        }
+      });
+      var url = '/compare?ids=' + compare_ids.join()
+      window.location.href = url;
+    });
+
+    $('.select').change(function(e){
+      if (this.checked){
+        if (number_selected >= 3){
+          alert("You can only compare three carriers at a time");
+          $(this).attr("checked", false);
+          return;
+        }
+        number_selected++;
+        $(this).parents('tr').children('td').addClass("selected");
+      }else{
+        number_selected--;
+        $(this).parents('tr').children('td').removeClass("selected");
+      }
+      if (number_selected > 1){
+        $('#compare').attr("disabled", false);
+      }else{
+        $('#compare').attr("disabled", true);
+      }
+    });
+    /*
+    $('.search_code').click(function(e){
+      var cid = $(this).data('cid');
+      search_class_code = cid;
+      $('#class_code_modal').modal('show')
+    });*/
+
+    $('.remove').click(function(e){
+      e.preventDefault();
+      if ($('.class_code').length > 1){
+        var row = $(this).data('cid');
+        $('#row_' + row).remove();
+      }
+    });
+
+    $('#add_class_code').click(function(e){
+      e.preventDefault();
+      if ($('.payroll').length >= 5){
+        alert('We currently only support give class codes');
+        return;
+      }
+      current_class_code++;
+      var $new_code = $('.row_template').html();
+      $new_code = $new_code.replace('class_code_1','class_code_' + current_class_code);
+      $new_code = $new_code.replace('class_code_1','class_code_' + current_class_code);
+      $new_code = $new_code.replace('payroll_1','payroll_' + current_class_code);
+      var $new_code = $('<div class="row" id="row_' + current_class_code +'"/>').append($new_code);
+      $new_code.find('input').val('');
+      $new_code.insertBefore('#add_link');
+
+      //Masking
+      $('.payroll').inputmask("integer", {rightAlignNumerics: false});
+
+      $new_code.find('button').data('cid',current_class_code);
+
+
+      /*$new_code.find('button').click(function(e){
+        var cid = $(this).data('cid');
+        search_class_code = cid;
+        $('#class_code_modal').modal('show')
+      });*/
+    });
+
+    $('#main_state_select').change(function(e){
+      $('#state_select').val($(this).val());
+    });
+    $('#keyword').bind('keypress', function(event){
+      if ( event.which == 13 ){
+        event.preventDefault();
+        $('#state_select').trigger('change');
+      }
+    });
+
+    $('#search').bind('click', function(){
+      $('#state_select').trigger('change');
+    });
+    $('#state_select').change(function(e){
+      var state = $('#state_select').val();
+      //var industry = $('#industry_select').val();
+      var keyword = $('#keyword').val();
+
+      if (state != "-"){
+        $.get('/ajax/class_codes/', 
+          {'state': state, 'q': keyword},
+          function(data){
+              var $table = $('#class_codes');
+              $table.empty();
+            if (data.codes && data.codes.length){
+              for(var num in data.codes){
+                var code = data.codes[num];
+                $table.append('<tr><td><a class="code" href="#'+ code.code +'">' + code['code'] + '</a></td><td><a class="code" href="#'+ code.code +'">' + code['name'] + '</a></td></tr>');
+              }
+              $('.code').bind('click', function(e){
+                e.preventDefault();
+                var code = $(this).attr('href').replace('#','');
+                console.log(search_class_code);
+                console.log($('#class_code_' + search_class_code));
+                $('#class_code_' + search_class_code).val(code);
+                $('#main_state_select').val(state);
+                $('#class_code_modal').modal('hide');
+              });
+            }else{
+              $table.append('<tr><td colspan="2"><em>No codes found</em></td></tr>'); 
+            }
+          }
+        );
+      }
+    });
+  });
+</script>
+{% endblock %}

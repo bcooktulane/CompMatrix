@@ -1,38 +1,38 @@
 {% load humanize %}
 
 <div id="compare_block">
-  <button disabled="disabled" id="compare" class="btn btn-small btn-success">Compare Carriers</button>
+    <button disabled="disabled" id="compare" class="btn btn-small btn-success">Compare Carriers</button>
 </div>
 <table class="table" id="table_view">
-  <thead>
-    <tr>
-      <th>Carrier</th>
-      <th>&nbsp;</th>
-      {% for cc in num_class_codes %}
-        <th>Rate {{ forloop.counter }}</th>
-        {% endfor %}
-      <th>Max</th>
-      <th>Manual</th>
-      <th>Min</th>
-      <th>Estimate</th>
-    </tr>
-  </thead>
-  {% for c in request.session.carriers %}
-  <tr>
-    <td>
-      <input class="select" type="checkbox" name="compare_{{ forloop.counter }}"> &nbsp;<a class="carrier_detail" href="{% url "detail" c.carrier.carrier.id %}">{{ c.carrier.carrier.name|title }}</a>
-    </td>
-    <td>
-        {% if c.carrier.premium < 200000 %}<img src="{{ STATIC_URL }}img/red-flag.png">{% endif %}
-        {% if c.carrier.premium > 1000000 %}<img src="{{ STATIC_URL }}img/green-flag.png">{% endif %}
-    </td>
-    {% for cc in c.class_codes %}
-      <td>{{ cc.rate }}</td>
+    <thead>
+        <tr>
+            <th>Carrier</th>
+            <th>&nbsp;</th>
+            {% for cc in num_class_codes %}
+                <th>Rate {{ forloop.counter }}</th>
+            {% endfor %}
+            <th>Max</th>
+            <th>Manual</th>
+            <th>Min</th>
+            <th>Estimate</th>
+        </tr>
+    </thead>
+    {% for carrier_state in carrier_states %}
+        <tr>
+            <td>
+                <input class="select" type="checkbox" name="compare_{{ forloop.counter }}"> &nbsp;<a class="carrier_detail" href="{% url "detail" carrier_state.carrier.id %}">{{ carrier_state.carrier.name|title }}</a>
+            </td>
+            <td>
+                {% if carrier_state.premium < 200000 %}<img src="{{ STATIC_URL }}img/red-flag.png">{% endif %}
+                {% if carrier_state.premium > 1000000 %}<img src="{{ STATIC_URL }}img/green-flag.png">{% endif %}
+            </td>
+            {% for cc in c.class_codes %}
+                <td>{{ cc.rate }}</td>
+            {% endfor %}
+            <td>${{ carrier_state.max_price|intcomma }}</td>
+            <td>${{ carrier_state.manual_price|intcomma }}</td>
+            <td>${{ carrier_state.min_price|intcomma }}</td>
+            <td>${{ carrier_state.estimate|intcomma }}</td>
+        </tr>
     {% endfor %}
-    <td>${{ c.max|intcomma }}</td>
-    <td>${{ c.manual|intcomma }}</td>
-    <td>${{ c.min|intcomma }}</td>
-    <td>${{ c.estimate|intcomma }}</td>
-  </tr>
-  {% endfor %}
 </table>

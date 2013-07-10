@@ -18,7 +18,7 @@ class Command(BaseCommand):
             terrorism_loss = Decimal(loss)
 
             state_obj, created = State.objects.get_or_create(name=state, abbreviation=state[0:2])
-            state_obj.max_credit = int(max_credit[:-1])
-            state_obj.max_debit = int(max_debit[:-1])
+            state_obj.max_credit = Decimal(max_credit[:-1]) / 100
+            state_obj.max_debit = Decimal(max_debit[:-1]) / 100
             state_obj.terrorism_loss = terrorism_loss
             state_obj.save()
