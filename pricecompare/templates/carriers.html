@@ -2,6 +2,10 @@
 <form action="/compare" method="GET">
 <div id="compare_block">
     <button disabled="disabled" id="compare" class="btn btn-small btn-success">Compare Carriers</button>
+    <input type="hidden" name="mod" value="{{ mod }}" />
+    <input type="hidden" name="class_code_1" value="{{ loss_cost.class_code.code }}" />
+    <input type="hidden" name="state" value="{{ state }}" />
+    <input type="hidden" name="payroll_1" value="{{ payroll }}" />
 </div>
 <table class="table" id="table_view">
     <thead>

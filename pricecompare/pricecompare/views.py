@@ -88,13 +88,17 @@ class CompareView(TemplateView):
         form_class_code = request.GET.get('class_code_1')
         state_abbr = request.GET.get('state')
 
-        carrier_states = CarrierState.objects.filter(carrier__id__in=compares)
+        carrier_states = CarrierState.objects.filter(id__in=compares)
         loss_cost = LossCost.objects.get(class_code__code=form_class_code, state__abbreviation=state_abbr)
 
         for carrier_state in carrier_states:
             carrier_state.set_inputs(loss_cost, payroll, mod)
 
         return_val.context_data['carrier_states'] = carrier_states
+        return_val.context_data['loss_cost'] = loss_cost
+        return_val.context_data['payroll'] = payroll
+        return_val.context_data['mod'] = mod
+        return_val.context_data['state'] = state_abbr
 
         return return_val
    
@@ -125,6 +129,7 @@ class QuoteView(TemplateView):
         return_val.context_data['loss_cost'] = loss_cost
         return_val.context_data['payroll'] = payroll
         return_val.context_data['mod'] = mod
+        return_val.context_data['state'] = request.GET.get('state')
 
         return return_val
 
