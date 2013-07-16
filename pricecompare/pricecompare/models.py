@@ -75,8 +75,14 @@ class CarrierState(models.Model):
     def rate(self):
         return self.lcm * self._loss_cost.loss_cost
 
+    def calc_premium(self):
+        return (self._payroll / 100) * self.rate()
+
+    def total_mod(self):
+        return self.calc_premium() * (self._mod - Decimal(1))
+
     def manual_price(self):
-        return (self._payroll / 100) * self.rate() * self._mod
+        return self.calc_premium() * self._mod
 
     def max_price(self):
         return self.manual_price() * (1+self.state.max_debit)
@@ -84,9 +90,16 @@ class CarrierState(models.Model):
     def min_price(self):
         return self.manual_price() * (1+self.state.max_credit)
 
+    def terrorism_fee(self):
+        return (self._payroll / 100) * self.state.terrorism_loss
+
+    def total_premium(self):
+        # TODO: This should eventually support multiple mod codes
+        pass
+
+
     def estimate(self):
-        terrorism_fee = (self._payroll / 100) * self.state.terrorism_loss
-        return self.manual_price() + terrorism_fee + self.carrier.expense_constant
+        return self.manual_price() + self.terrorism_fee() + self.carrier.expense_constant
 
     def __unicode__(self):
         return "%s - %s" % (self.carrier, self.state)

@@ -52,7 +52,7 @@
     var current_class_code = {{ num_class_codes|length }};
     var search_class_code = 0;
     var number_selected = 0;
-    var compares = [{{ request.session.compares }}];
+    var compares = [];
 
     /* Masking */
     $('.payroll').inputmask("integer", {rightAlignNumerics: false});

@@ -52,7 +52,7 @@
     var current_class_code = {{ num_class_codes|length }};
     var search_class_code = 0;
     var number_selected = 0;
-    var compares = [{{ request.session.compares }}];
+    var compares = [];
 
     /* Masking */
     $('.payroll').inputmask("integer", {rightAlignNumerics: false});
@@ -99,6 +99,7 @@
     });
 
     $('#compare').click(function(e){
+        /*
       var compare_ids = [];
       $('input[type=checkbox]').each(function(){
         if (this.checked){
@@ -107,6 +108,7 @@
       });
       var url = '/compare?ids=' + compare_ids.join()
       window.location.href = url;
+      */
     });
 
     $('.select').change(function(e){

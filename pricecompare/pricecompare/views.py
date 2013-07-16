@@ -28,7 +28,7 @@ class HomeView(TemplateView):
                     carrier = c['carrier'].carrier
 
         compare_carriers = []
-        if compares:
+        if not compares:
             for compare_id in compares.split(','):
                 for c in self.request.session['carriers']:
                     if c['carrier'].id == int(compare_id):
@@ -55,11 +55,48 @@ class HomeView(TemplateView):
         return context
 
 
-class CompareView(View):
+class DetailView(TemplateView):
+    template_name = "carrier_view.html"
+
+    def get_context_data(self, **kwargs):
+        carrier_state_id = kwargs.get('carrier_state_id', None)
+        carrier_state = CarrierState.objects.get(id=carrier_state_id)
+
+        payroll = self.request.GET.get('payroll_1')
+        form_class_code = self.request.GET.get('class_code_1')
+        mod = Decimal(self.request.GET.get('mod'))
+
+        loss_cost = LossCost.objects.get(class_code__code=form_class_code, state__abbreviation=carrier_state.state.abbreviation)
+
+        carrier_state.set_inputs(loss_cost, payroll, mod)
+        context = {
+            'carrier_state': carrier_state,
+            'mod': mod,
+            'loss_cost': loss_cost, 
+            'payroll': payroll
+        }
+        return context
+
+class CompareView(TemplateView):
+    template_name = "compare.html"
     def get(self, request, *args, **kwargs):
-        compares = request.GET.get('ids', '')
-        request.session['compares'] = compares
-        return redirect('home')
+        return_val = super(CompareView, self).get(request, *args, **kwargs)
+        compares = request.GET.getlist('compare[]')
+
+        mod = Decimal(request.GET.get('mod'))
+        payroll = request.GET.get('payroll_1')
+        form_class_code = request.GET.get('class_code_1')
+        state_abbr = request.GET.get('state')
+
+        carrier_states = CarrierState.objects.filter(carrier__id__in=compares)
+        loss_cost = LossCost.objects.get(class_code__code=form_class_code, state__abbreviation=state_abbr)
+
+        for carrier_state in carrier_states:
+            carrier_state.set_inputs(loss_cost, payroll, mod)
+
+        return_val.context_data['carrier_states'] = carrier_states
+
+        return return_val
    
 
 class QuoteView(TemplateView):
@@ -79,16 +116,15 @@ class QuoteView(TemplateView):
                                           state__losscost__class_code__code=form_class_code,
                                           premium__gt=0)
 
-        state = State.objects.get(abbreviation=state_abbr)
-
-        class_code = ClassCode.objects.get(code=form_class_code)
-        state = class_code.states.get(abbreviation=state_abbr)
-        loss_cost = LossCost.objects.get(class_code=class_code, state=state)
+        loss_cost = LossCost.objects.get(class_code__code=form_class_code, state__abbreviation=state_abbr)
 
         for carrier_state in carrier_states:
             carrier_state.set_inputs(loss_cost, payroll, mod)
 
         return_val.context_data['carrier_states'] = carrier_states
+        return_val.context_data['loss_cost'] = loss_cost
+        return_val.context_data['payroll'] = payroll
+        return_val.context_data['mod'] = mod
 
         return return_val
 

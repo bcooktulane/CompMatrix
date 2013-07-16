@@ -1,5 +1,5 @@
 {% load humanize %}
-
+<form action="/compare" method="GET">
 <div id="compare_block">
     <button disabled="disabled" id="compare" class="btn btn-small btn-success">Compare Carriers</button>
 </div>
@@ -20,7 +20,7 @@
     {% for carrier_state in carrier_states %}
         <tr>
             <td>
-                <input class="select" type="checkbox" name="compare_{{ forloop.counter }}"> &nbsp;<a class="carrier_detail" href="{% url "detail" carrier_state.carrier.id %}">{{ carrier_state.carrier.name|title }}</a>
+                <input class="select" type="checkbox" name="compare[]" value="{{ carrier_state.id }}"> &nbsp;<a class="carrier_detail" href="{% url "detail" carrier_state.id %}?class_code_1={{ loss_cost.class_code.code }}&payroll_1={{ payroll }}&mod={{ mod }}">{{ carrier_state.carrier.name|title }}</a>
             </td>
             <td>
                 {% if carrier_state.premium < 200000 %}<img src="{{ STATIC_URL }}img/red-flag.png">{% endif %}
@@ -36,3 +36,4 @@
         </tr>
     {% endfor %}
 </table>
+</form>

@@ -1,6 +1,9 @@
+{% extends 'base.html' %}
 {% load humanize %}
 
-<h3>{{ carrier.name|title }}</h3>
+{% block content %}
+{% include "quote_form.html" %}
+<h3>{{ carrier_state.carrier.name|title }}</h3>
 <table class="table class_stats">
   <thead>
     <tr>
@@ -9,34 +12,32 @@
       <th>Payroll</th>
       <th>Premium</th>
     </tr>
-  {% for ccode in carrier_data.class_codes %}
   <tr>
     <td>
-      {{ ccode.code.class_code }}
+        {{ loss_cost.class_code.code }}
     </td>
-    <td> {{ ccode.rate }}</td>
-    <td>${{ ccode.code.payroll|intcomma }}</td>
-    <td>${{ ccode.premium|intcomma}}</td>
+    <td> {{ carrier_state.rate }}</td>
+    <td>${{ payroll|intcomma }}</td>
+    <td>${{ carrier_state.calc_premium|intcomma }}</td>
   </tr>
-  {% endfor %}
   <tr><td colspan="4">&nbsp;</td></tr>
   <tr>
     <td></td>
     <td>Modification Factor</td>
-    <td>{{ request.session.form.mod }}</td>
-    <td>${{ carrier_data.total_mod|intcomma }}</td>
+    <td>{{ mod }}</td>
+    <td>${{ carrier_state.total_mod|intcomma }}</td>
   </tr>
   <tr>
     <td></td>
     <td>Manual Premium</td>
     <td></td>
-    <td>$<span class="premium">{{ carrier_data.manual|intcomma }}</span></td>
+    <td>$<span class="premium">{{ carrier_state.manual_price|intcomma }}</span></td>
   </tr>
   <tr>
     <td></td>
     <td>Estimated Debits Credit**</td>
     <td>
-        <div class="slider" data-mincredit="{{ carrier_data.min_credit }}" data-maxcredit="{{ carrier_data.max_credit }}"></div>
+        <div class="slider" data-mincredit="{{ carrier_state.min_price|intcomma }}" data-maxcredit="{{ carrier_state.max_price|intcomma }}"></div>
       <div style="text-align:center;" class="percent">0%</div>
     </td>
     <td>$<span class="credit">0</span></td>
@@ -45,18 +46,19 @@
     <td></td>
     <td>Expense Constant</td>
     <td></td>
-    <td>${{ carrier_data.expense_constant|intcomma }}</td>
+    <td>${{ carrier_state.carrier.expense_constant|intcomma }}</td>
   </tr>
   <tr>
     <td></td>
     <td>Terrorism Fee</td>
     <td></td>
-    <td>${{ carrier_data.terror_fee|intcomma }}</td>
+    <td>${{ carrier_state.terrorism_fee|intcomma }}</td>
   </tr>
   <tr>
     <td></td>
     <td></td>
     <td><strong>Estimate</strong></td>
-    <td><strong>$<span class="estimate" data-original="{{ carrier_data.estimate}}">{{ carrier_data.estimate|intcomma }}</span></strong></td>
+    <td><strong>$<span class="estimate" data-original="{{ carrier_state.estimate}}">{{ carrier_state.estimate|intcomma }}</span></strong></td>
   </tr>
 </table>
+{% endblock %}

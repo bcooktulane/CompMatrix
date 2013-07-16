@@ -1,5 +1,8 @@
+{% extends 'base.html' %}
 {% load humanize %}
 
+{% block content %}
+{% include "quote_form.html" %}
 <h3>Compare Carriers</h3>
 
 <table style="width:100%;">
@@ -88,3 +91,4 @@
         </tr>
     </tbody>
 </table>
+{% endblock %}
