@@ -21,33 +21,6 @@
 {% block extra_js %}
 <script>
   $(function(){
-     $( ".slider" ).slider({
-      value:0,
-      create: function(event, ui) {
-          var min = -parseInt($(event.target).attr('data-mincredit'));
-          var max = parseInt($(event.target).attr('data-maxcredit'));
-          $(event.target).slider("option", "min", min);
-          $(event.target).slider("option", "max", max);
-          console.log(min);
-          console.log(max);
-          console.log(event.target);
-        },
-      step: 5,
-      slide: function( event, ui ) {
-          var elPercent = $(event.target).closest('.class_stats').find('.percent');
-          var elPremium = $(event.target).closest('.class_stats').find('.premium');
-          var elEstimate = $(event.target).closest('.class_stats').find('.estimate');
-          var elCredit = $(event.target).closest('.class_stats').find('.credit');
-          elPercent.html( ui.value + '%');
-        var premium = parseFloat(elPremium.html().replace(',',''));
-        var credit = Math.round(premium * (1+ui.value*0.01)-premium);
-        var $estimate = elEstimate;
-        var new_estimate = parseInt($estimate.data('original')) + credit;
-
-        elCredit.html(credit);
-        elEstimate.html(new_estimate.toFixed(2));
-      }
-    });
 
     var current_class_code = {{ num_class_codes|length }};
     var search_class_code = 0;

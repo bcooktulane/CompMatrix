@@ -37,7 +37,7 @@
     <td></td>
     <td>Estimated Debits Credit**</td>
     <td>
-        <div class="slider" data-mincredit="{{ carrier_state.min_price|intcomma }}" data-maxcredit="{{ carrier_state.max_price|intcomma }}"></div>
+        <div class="slider" data-mincredit="{{ carrier_state.state.max_debit }}" data-maxcredit="{{ carrier_state.state.max_credit }}"></div>
       <div style="text-align:center;" class="percent">0%</div>
     </td>
     <td>$<span class="credit">0</span></td>

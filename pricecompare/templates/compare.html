@@ -16,7 +16,7 @@
     </thead>
     <tbody>
         <tr>
-            <td>
+            <td width="25%">
                 <table class="table" style="font-weight:bold;">
                     <tr><td>&nbsp;</td></tr>
                     <tr><td>Class Code ({{loss_cost.class_code.code}})</td></tr>
@@ -34,7 +34,7 @@
                 </table>
             </td>
             {% for carrier_state in carrier_states %}
-                <td>
+                <td width="25%">
                     <table class="table class_stats">
                         <tr>
                             <td><strong>{{ carrier_state.carrier.name|title }}</strong></td>
@@ -58,8 +58,8 @@
                         </tr>
                         <tr>
                             <td>
-                                <div class="slider" data-mincredit="{{ carrier_state.min_price }}" data-maxcredit="{{ carrier_state.max_price }}"></div>
-                                <div style="text-align:center;" class="percent">0%</div>
+                                <div class="slider" data-mincredit="{{ carrier_state.state.max_debit }}" data-maxcredit="{{ carrier_state.state.max_credit }}"></div>
+                                <div style="text-align:center;" class="percent">50%</div>
                             </td>
                         </tr>
                         <tr>
@@ -75,7 +75,7 @@
                             <td>${{ carrier_state.terrorism_fee|intcomma }}</td>
                         </tr>
                         <tr>
-                            <td><strong>$<span class="estimate" data-original="{{ carrier_state.estimate}}">{{ carrier_state.estimate|intcomma }}</span></strong></td>
+                            <td><strong>$<span class="estimate" data-original="{{ carrier_state.estimate }}">{{ carrier_state.estimate|intcomma }}</span></strong></td>
                         </tr>
                     </table>
                 </td>
