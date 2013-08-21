@@ -47,7 +47,7 @@ SERVER_EMAIL = EMAIL_HOST_USER
 
 ########## CACHE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
-CACHES = {}
+#CACHES = {}
 ########## END CACHE CONFIGURATION
 
 
