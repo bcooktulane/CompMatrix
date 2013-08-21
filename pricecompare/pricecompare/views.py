@@ -11,46 +11,9 @@ class HomeView(TemplateView):
     template_name = "home.html"
 
     def get_context_data(self, **kwargs):
-        try:
-            num_class_codes = range(len(self.request.session['class_codes']))
-        except:
-            num_class_codes = []
-
-        carrier_id = kwargs.get('carrier_id', None)
-        compares = self.request.session.get('compares', None)
-
-        carrier = None
-        carrier_data = None
-        if carrier_id:
-            for c in self.request.session['carriers']:
-                if c['carrier'].id == int(carrier_id):
-                    carrier_data = c
-                    carrier = c['carrier'].carrier
-
-        compare_carriers = []
-        if not compares:
-            for compare_id in compares.split(','):
-                for c in self.request.session['carriers']:
-                    if c['carrier'].id == int(compare_id):
-                        carrier_data = c
-                        carrier = c['carrier'].carrier
-
-                compare_carriers.append({
-                    'carrier': carrier,
-                    'carrier_data': carrier_data,
-                })
-
-        for cc in compare_carriers:
-            print cc['carrier_data']
-
         context = {
-            'num_class_codes': num_class_codes,
             'states': State.objects.filter(active=True).order_by('name'),
             'industries': IndustryGroup.objects.all(),
-            'carrier_id': carrier_id,
-            'carrier': carrier,
-            'carrier_data': carrier_data,
-            'compare_carriers': compare_carriers,
         }
         return context
 
