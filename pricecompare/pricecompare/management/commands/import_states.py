@@ -8,7 +8,7 @@ from pricecompare.models import *
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        cr = csv.reader(open("/vagrant/import_data/states.csv","rb"))
+        cr = csv.reader(open("import_data/states.csv","rb"))
         row_count = 0
         for row in cr:
             print row_count
