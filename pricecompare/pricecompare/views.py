@@ -10,6 +10,9 @@ from pricecompare.models import (State, IndustryGroup, LossCost, ClassCode,
 class HomeView(TemplateView):
     template_name = "home.html"
 
+class SearchView(TemplateView):
+    template_name = "search.html"
+
     def get_context_data(self, **kwargs):
         context = {
             'states': State.objects.filter(active=True).order_by('name'),
@@ -29,7 +32,7 @@ class DetailView(TemplateView):
         form_class_code = self.request.GET.get('class_code_1')
         mod = Decimal(self.request.GET.get('mod'))
 
-        loss_cost = LossCost.objects.get(class_code__code=form_class_code, state__abbreviation=carrier_state.state.abbreviation)
+        loss_cost = LossCost.objects.filter(class_code__code=form_class_code, state__abbreviation=carrier_state.state.abbreviation)[:1].get()
 
         carrier_state.set_inputs(loss_cost, payroll, mod)
         context = {
@@ -83,7 +86,7 @@ class QuoteView(TemplateView):
                                           state__losscost__class_code__code=form_class_code,
                                           premium__gt=0)
 
-        loss_cost = LossCost.objects.get(class_code__code=form_class_code, state__abbreviation=state_abbr)
+        loss_cost = LossCost.objects.filter(class_code__code=form_class_code, state__abbreviation=state_abbr)[:1].get()
 
         for carrier_state in carrier_states:
             carrier_state.set_inputs(loss_cost, payroll, mod)

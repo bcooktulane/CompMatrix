@@ -20,15 +20,16 @@ $(function() {
                 var estimate = premium * (1+premium_modifier);
                 elCredit.html(Math.round(credit));
                 elEstimate.html(Math.round(estimate));
+                elPercent.html( Math.round(premium_modifier * 100) + '%');
             } else {
                 var premium_modifier = (((ui.value - 50) * 2) * 0.01) * max_credit;
                 var credit = premium * premium_modifier;
                 var estimate = premium * (1+premium_modifier);
                 elCredit.html("(" + Math.round(credit) + ")");
                 elEstimate.html(Math.round(estimate));
+                elPercent.html( Math.round((0-premium_modifier) * 100) + '%');
             }
 
-            elPercent.html( ui.value + '%');
         }
     });
 });

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+{% include "quote_form.html" %}
+
+{% if request.session.carriers %}
+  {% if compare_carriers %}
+    {% include "compare.html" %}
+  {% elif carrier %}
+    {% include "carrier_view.html" %}
+  {% else %}
+    {% include "carriers.html" %}
+  {% endif %}
+{% endif %}
+
+{% include "class_code_modal.html" %}
+
+{% endblock content %}
+

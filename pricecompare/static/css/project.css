@@ -42,3 +42,18 @@ body {
 td.selected{
   background:#e2ffe9;
 }
+
+ul.flags li {
+    padding-left: 25px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+ul.flags li.green {
+    background: transparent url(../img/green-flag.png) no-repeat 0 50%;
+}
+ul.flags li.yellow {
+    background: transparent url(../img/yellow-flag.png) no-repeat 0 50%;
+}
+ul.flags li.red {
+    background: transparent url(../img/red-flag.png) no-repeat 0 50%;
+}

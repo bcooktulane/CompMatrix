@@ -5,12 +5,13 @@ from django.views.generic import TemplateView
 from django.contrib import admin
 admin.autodiscover()
 
-from pricecompare.views import HomeView, QuoteView, CompareView, DetailView
+from pricecompare.views import SearchView, HomeView, QuoteView, CompareView, DetailView
 from pricecompare.ajax_views import ClassCodeView
 
 
 urlpatterns = patterns('',
     url(r'^$', HomeView.as_view(), name="home"),
+    url(r'^search/$', SearchView.as_view(), name="home"),
     url(r'^(?P<carrier_state_id>\d+)/$', DetailView.as_view(), name="detail"),
     url(r'quote/$', QuoteView.as_view(), name="quote"),
     url(r'compare/$', CompareView.as_view(), name="compare"),
