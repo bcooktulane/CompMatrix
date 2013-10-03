@@ -1,3 +1,12 @@
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from contacts.models import ContactForm
+from django.template import RequestContext, Context
+from django import newforms as forms
+from django.newforms.widgets import *
+from django.core.mail import send_mail, BadHeaderError
+
 from decimal import Decimal
 
 from django.shortcuts import redirect
@@ -6,9 +15,32 @@ from django.views.generic import TemplateView, View
 from pricecompare.models import (State, IndustryGroup, LossCost, ClassCode,
                                  CarrierState, StateModifier, Carrier)
 
+class ContactView(TemplateView):
+    template_name = "contact.html"
+
+    def contactview(request):
+        subject = request.POST.get('topic', '')
+        message = request.POST.get('message', '')
+        from_email = request.POST.get('email', '')
+
+        if subject and message and from_email:
+            try:
+                send_mail(subject, message, from_email, ['brian@compmatrix.com'])
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            return HttpResponseRedirect('/contact/thankyou/')
+        else:
+            return render_to_response('contact.html', {'form': ContactForm()})
+
+        return render_to_response('contact.html', {'form': ContactForm()},
+                            RequestContext(request))
+
+    def thankyou(request):
+        return render_to_response('thankyou.html')
 
 class HomeView(TemplateView):
     template_name = "home.html"
+
 
 class SearchView(TemplateView):
     template_name = "search.html"
