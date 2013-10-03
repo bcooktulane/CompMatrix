@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.db import models
-from django import newforms as forms
-from django.newforms.widgets import *
+from django import forms as forms
+from django.forms.widgets import *
 from django.core.mail import send_mail, BadHeaderError
 
 class ContactForm(forms.Form):
