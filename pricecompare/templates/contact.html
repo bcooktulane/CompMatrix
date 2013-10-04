@@ -26,7 +26,8 @@
     
     <div class="span6">
       <form name="theform" action="." method="post" id="theform">
-          <div class="controls controls-row">
+          {% csrf_token %}
+	  <div class="controls controls-row">
               <input id="name" name="name" type="text" class="span3" placeholder="Name"> 
               <input id="email" name="email" type="email" class="span3" placeholder="Email address">
           </div>
