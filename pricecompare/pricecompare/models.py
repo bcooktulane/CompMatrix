@@ -8,7 +8,7 @@ class ContactForm(forms.Form):
     name = forms.CharField()
     email = forms.EmailField()
     topic = forms.CharField()
-    message = forms.CharField(widget=Textarea())
+    message = forms.CharField(widget=forms.Textarea)
 
 
 class State(models.Model):
