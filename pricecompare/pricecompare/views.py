@@ -14,7 +14,7 @@ from django.views.generic import TemplateView, View
 
 from pricecompare.models import (State, IndustryGroup, LossCost, ClassCode,
                                  CarrierState, StateModifier, Carrier)
-
+@csrf_exempt
 class ContactView(TemplateView):
     template_name = "contact.html"
 
