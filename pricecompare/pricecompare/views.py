@@ -35,16 +35,14 @@ class ContactView(TemplateView):
         return render_to_response('contact.html', {'form': ContactForm()},
                             RequestContext(request))
 
-    def thankyou(request):
-        return render_to_response('thankyou.html')
-
 
 class HomeView(TemplateView):
     template_name = "home.html"
 
 class ThankYou(TemplateView):
     template_name = "thankyou.html"
-
+    def thankyou(request):   
+        return render_to_response('thankyou.html')  
 
 class SearchView(TemplateView):
     template_name = "search.html"
