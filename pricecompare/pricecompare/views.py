@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from contacts.models import ContactForm
+from pricecompare.models import ContactForm
 from django.template import RequestContext, Context
 from django import forms as forms
 from django.forms.widgets import *
