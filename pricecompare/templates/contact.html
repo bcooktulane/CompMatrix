@@ -2,36 +2,39 @@
 {% load humanize %}
 
 {% block content %}
- <div class="container">
-<div id="contact_wrap">
-
-        <div id="contact" class="clearfix">
-            <div id="c_form">
-                <br /><br />
-                <form name="theform" action="." method="post" id="theform">
-                    <div id="name_email">
-
-                        <label id="id_name">Name:</label>
-                        <input type="text" name="name" value="" id="name" />
-                        <label id="id_email">Email:</label>
-                        <input type="text" name="email" value="" id="Email" />
-                    </div><!-- end name_email -->
-                    <div id="message">
-                        <label id="id_message">Message:</label>
-                        <textarea name="message" rows="8" cols="37"></textarea>
-
-                    </div><!-- end message -->
-                    <div id="submit">
-                        <input type="image" src="http://path/to/submitbutton.png" onclick="YY_checkform('theform','name','#q','0','Field \'name\' is empty.','Email','#S','2','Field \'Email\' appears not to be valid.','message','2','1','Field \'message\' is empty.');return document.MM_returnValue" />
-                    </div><!-- end submit -->
-                    <input class="hidden" type="hidden" name="topic" value="Home : Contact Form Submission" id="subject" />
-                </form>
-
-            </div><!-- end c_form -->
-        </div><!-- end contact -->
-
-    </div><!-- end contact_wrap -->
-    </div> <!-- /container -->
-
+<div class="container">
+  <div class="row">
+    <div class="span2">
+      <img src="http://m.c.lnkd.licdn.com/media/p/5/000/24c/24c/2084856.jpg"  alt="" class="img-rounded">
+    </div>
+    <div class="span4">
+      <blockquote>
+        <p>Brian Cook</p>
+        <small><cite title="Source Title">Wellington, New Zealand  <i class="icon-map-marker"></i></cite></small>
+      </blockquote>
+      <p>
+        <i class="icon-envelope"></i> briancookt@gmail.com <br>
+        <i class="icon-globe"></i> www.briantcook.com <br>
+      </p>
+    </div>
+    
+    <div class="span6">
+      <form>
+          <div class="controls controls-row">
+              <input id="name" name="name" type="text" class="span3" placeholder="Name"> 
+              <input id="email" name="email" type="email" class="span3" placeholder="Email address">
+          </div>
+          <div class="controls">
+              <textarea id="message" name="message" class="span6" placeholder="Your Message" rows="5"></textarea>
+          </div>
+          
+          <div class="controls">
+              <button id="contact-submit" type="submit" class="btn btn-primary input-medium pull-right">Send</button>
+          </div>
+      </form>
+    </div>
+     
+  </div>
+</div>
 
 {% endblock content %}
