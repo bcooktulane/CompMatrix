@@ -30,7 +30,7 @@ class ContactView(TemplateView):
                 send_mail(subject, message, from_email, ['brian@compmatrix.com'])
             except BadHeaderError:
                 return HttpResponse('Invalid header found.')
-            return HttpResponseRedirect('/thankyou')
+            return HttpResponseRedirect('/contact/thankyou/')
         else:
             return render_to_response('contact.html', {'form': ContactForm()})
 
