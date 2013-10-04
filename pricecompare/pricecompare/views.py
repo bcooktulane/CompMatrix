@@ -38,8 +38,12 @@ class ContactView(TemplateView):
     def thankyou(request):
         return render_to_response('thankyou.html')
 
+
 class HomeView(TemplateView):
     template_name = "home.html"
+
+class ThankYou(TemplateView):
+    template_name = "thankyou.html"
 
 
 class SearchView(TemplateView):
