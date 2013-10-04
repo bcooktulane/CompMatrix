@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.db import models
-from django import forms as forms
+from django import forms
 from django.forms.widgets import *
 from django.core.mail import send_mail, BadHeaderError
 
