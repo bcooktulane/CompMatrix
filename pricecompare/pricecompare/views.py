@@ -14,10 +14,11 @@ from django.views.generic import TemplateView, View
 
 from pricecompare.models import (State, IndustryGroup, LossCost, ClassCode,
                                  CarrierState, StateModifier, Carrier)
-@csrf_exempt
+
 class ContactView(TemplateView):
     template_name = "contact.html"
 
+    @csrf_exempt
     def contactview(request):
         subject = request.POST.get('topic', '')
         message = request.POST.get('message', '')
@@ -41,6 +42,7 @@ class HomeView(TemplateView):
 
 class ThankYou(TemplateView):
     template_name = "thankyou.html"
+    @csrf_exempt
     def thankyou(request):   
         return render_to_response('thankyou.html')  
 
